@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URI")
+}
+
+model accounts {
+  account_id          String        @id(map: "pk_accounts_account_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  provider            provider_type
+  refresh_token       String?
+  access_token        String
+  access_expires_in   Int
+  created_at          DateTime?     @default(now()) @db.Timestamp(6)
+  user_id             String        @db.Uuid
+  provider_account_id String        @db.VarChar
+  users               users         @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "fk_accounts_users")
+
+  @@unique([provider, provider_account_id])
+  @@index([user_id], map: "idx_accounts_user_id")
+}
+
+model answers {
+  answer_id     String    @id(map: "pk_answers_answer_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  post_id       String    @db.Uuid
+  text          String
+  user_id       String    @db.Uuid
+  is_correct    Boolean?  @default(false)
+  parent_id     String?   @db.Uuid
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+  answers       answers?  @relation("answersToanswers", fields: [parent_id], references: [answer_id], onUpdate: NoAction, map: "fk_answers_parents")
+  other_answers answers[] @relation("answersToanswers")
+  posts         posts     @relation(fields: [post_id], references: [post_id], onDelete: Cascade, map: "fk_answers_posts")
+  users         users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "fk_answers_users")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model post_difficulties {
+  post_difficulty_id String  @id(map: "pk_post_difficulties_post_difficulty_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  difficulty         String  @unique @db.VarChar(64)
+  reward             Int
+  posts              posts[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model posts {
+  post_id            String            @id(map: "pk_posts_post_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  data_url           String            @unique
+  title              String            @db.VarChar(64)
+  description        String            @db.VarChar(255)
+  is_closed          Boolean           @default(false)
+  likes              Int
+  user_id            String            @db.Uuid
+  post_difficulty_id String            @db.Uuid
+  created_at         DateTime          @default(now()) @db.Timestamp(6)
+  updated_at         DateTime          @default(now()) @db.Timestamp(6)
+  answers            answers[]
+  post_difficulties  post_difficulties @relation(fields: [post_difficulty_id], references: [post_difficulty_id], onDelete: Cascade, map: "fk_posts_post_difficulties")
+  users              users             @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "fk_posts_users")
+  posts_tags         posts_tags[]
+}
+
+model posts_tags {
+  post_id String @db.Uuid
+  tag_id  String @db.Uuid
+  posts   posts  @relation(fields: [post_id], references: [post_id], onDelete: Cascade, map: "fk_posts_tags_post_id")
+  tags    tags   @relation(fields: [tag_id], references: [tag_id], onDelete: Cascade, map: "fk_posts_tags_tag_id")
+
+  @@id([post_id, tag_id], map: "pk_posts_tags")
+}
+
+model ranks {
+  rank_id         String       @id(map: "pk_ranks_rank_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name            String       @db.VarChar(64)
+  required_points Int          @default(0)
+  badge_url       String
+  user_ranks      user_ranks[]
+}
+
+model tags {
+  tag_id     String       @id(map: "pk_tags_tag_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tag        String       @unique @db.VarChar(64)
+  posts_tags posts_tags[]
+}
+
+model tokens {
+  token_id   String     @id(map: "pk_tokens_token_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  token      String
+  type       token_type
+  expires_in DateTime   @db.Timestamp(6)
+  created_at DateTime   @default(now()) @db.Timestamp(6)
+  user_id    String     @db.Uuid
+  users      users      @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "fk_tokens_users")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_ranks {
+  user_rank_id String   @id(map: "pk_user_ranks_user_rank_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  points       Int      @default(0)
+  rank_id      String   @db.Uuid
+  user_id      String   @unique @db.Uuid
+  updated_at   DateTime @default(now()) @db.Timestamp(6)
+  ranks        ranks    @relation(fields: [rank_id], references: [rank_id], onDelete: Cascade, map: "fk_user_ranks_ranks")
+  users        users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "fk_user_ranks_users")
+}
+
+model users {
+  user_id            String      @id(map: "pk_users_user_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  email              String      @unique @db.VarChar(254)
+  password_hash      String
+  display_name       String      @db.VarChar(64)
+  avatar_url         String?     @unique
+  isverified         Boolean     @default(false)
+  istwofactorenabled Boolean     @default(false)
+  method             auth_method
+  created_at         DateTime    @default(now()) @db.Timestamp(6)
+  accounts           accounts[]
+  answers            answers[]
+  posts              posts[]
+  tokens             tokens[]
+  user_ranks         user_ranks?
+
+  @@index([email], map: "idx_users_email")
+}
+
+enum auth_method {
+  credentials
+  google
+  github
+  telegram
+}
+
+enum provider_type {
+  google
+  github
+  telegram
+}
+
+enum token_type {
+  verification
+  two_factor
+  password_reset
+}

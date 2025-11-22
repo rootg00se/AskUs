@@ -15,6 +15,8 @@ async function bootstrap() {
     app.useLogger(new CustomLogger());
     app.useGlobalFilters(new GlobalFilter());
     app.useGlobalInterceptors(new GlobalInterceptor());
+    
+    app.setGlobalPrefix("api/v1");
 
     app.useGlobalPipes(
         new ValidationPipe({

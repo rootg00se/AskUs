@@ -25,8 +25,8 @@
     "jsx": "react",
     "paths": {
       "@/*": ["src/*"],
-      "@prisma/__generated__": ["prisma/__generated__"],
-      "@prisma/__generated__/*": ["prisma/__generated__/*"]
+      "@prisma/generated": ["prisma/generated"],
+      "@prisma/generated/*": ["prisma/generated/*"]
     }
   }
 }

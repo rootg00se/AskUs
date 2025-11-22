@@ -1,0 +1,35 @@
+version: '0.0.1'
+
+services:
+  postgres:
+    container_name: postgres_askus
+    image: postgres:17-alpine
+    restart: always
+    env_file:
+      - ./askus_server/.env
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+  redis:
+    container_name: redis_askus
+    image: redis:7.2-alpine
+    restart: always
+    env_file:
+      - ./askus_server/.env
+    ports:
+      - 6379:6379
+    command: sh -c "redis-server --requirepass $${REDIS_PASSWORD}"
+    volumes:
+      - redis_data:/data 
+    networks:
+      - backend 
+    
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  backend:

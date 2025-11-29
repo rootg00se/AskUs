@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "./generated"
 }
 
@@ -108,20 +108,20 @@ model user_ranks {
 }
 
 model users {
-  user_id            String      @id(map: "pk_users_user_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  email              String      @unique @db.VarChar(254)
-  password_hash      String
-  display_name       String      @db.VarChar(64)
-  avatar_url         String?     @unique
-  isverified         Boolean     @default(false)
-  istwofactorenabled Boolean     @default(false)
-  method             auth_method
-  created_at         DateTime    @default(now()) @db.Timestamp(6)
-  accounts           accounts[]
-  answers            answers[]
-  posts              posts[]
-  tokens             tokens[]
-  user_ranks         user_ranks?
+  user_id               String      @id(map: "pk_users_user_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  email                 String      @unique @db.VarChar(254)
+  password_hash         String
+  display_name          String      @db.VarChar(64)
+  avatar_url            String?     @unique
+  is_verified           Boolean     @default(false)
+  is_two_factor_enabled Boolean     @default(false)
+  method                auth_method
+  created_at            DateTime    @default(now()) @db.Timestamp(6)
+  accounts              accounts[]
+  answers               answers[]
+  posts                 posts[]
+  tokens                tokens[]
+  user_ranks            user_ranks?
 
   @@index([email], map: "idx_users_email")
 }

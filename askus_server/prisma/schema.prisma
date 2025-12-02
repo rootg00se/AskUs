@@ -13,7 +13,6 @@ model accounts {
   provider            provider_type
   refresh_token       String?
   access_token        String
-  access_expires_in   Int
   created_at          DateTime?     @default(now()) @db.Timestamp(6)
   user_id             String        @db.Uuid
   provider_account_id String        @db.VarChar
@@ -110,13 +109,13 @@ model user_ranks {
 model users {
   user_id               String      @id(map: "pk_users_user_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   email                 String      @unique @db.VarChar(254)
-  password_hash         String
+  password_hash         String?
   display_name          String      @db.VarChar(64)
   avatar_url            String?     @unique
   is_verified           Boolean     @default(false)
   is_two_factor_enabled Boolean     @default(false)
-  method                auth_method
   created_at            DateTime    @default(now()) @db.Timestamp(6)
+  method                auth_method
   accounts              accounts[]
   answers               answers[]
   posts                 posts[]
@@ -128,9 +127,7 @@ model users {
 
 enum auth_method {
   credentials
-  google
-  github
-  telegram
+  oauth
 }
 
 enum provider_type {

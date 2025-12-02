@@ -2,8 +2,10 @@ import {
     Body,
     Controller,
     Get,
+    HttpStatus,
     InternalServerErrorException,
     Post,
+    Redirect,
     Req,
     Res,
     UseGuards,
@@ -16,13 +18,19 @@ import { Authorized } from "./decorators/authorized.decorator";
 import { type IUser } from "@/libs/common/types/user.type";
 import { ValidateLoginGuard } from "./decorators/validate-login.decorator";
 import { ConfigService } from "@nestjs/config";
+import { AuthenticatedGuard } from "./guards/authenticated.guard";
+import { GoogleAuthGuard } from "./guards/google-auth.guard";
 
 @Controller("auth")
 export class AuthController {
+    private readonly CLIENT_URL: string;
+
     constructor(
         private readonly authService: AuthService,
         private readonly configService: ConfigService,
-    ) {}
+    ) {
+        this.CLIENT_URL = configService.getOrThrow<string>("CLIENT_ORIGIN");
+    }
 
     @Post("register")
     async register(@Body() userData: RegisterDto, @Req() req: Request) {
@@ -38,8 +46,8 @@ export class AuthController {
         return user;
     }
 
-    @UseGuards(ValidateLoginGuard, LocalGuard)
     @Post("login")
+    @UseGuards(ValidateLoginGuard, LocalGuard)
     async login(@Authorized() user: IUser) {
         return user;
     }
@@ -63,5 +71,21 @@ export class AuthController {
                 });
             });
         });
+    }
+
+    @Get("oauth2/google")
+    @UseGuards(GoogleAuthGuard)
+    googleOAuth() {}
+
+    @Get("oauth2/google/redirect")
+    @UseGuards(GoogleAuthGuard)
+    googleOAuthRedirect(@Res() res: Response) {
+        res.status(302).redirect(this.CLIENT_URL);
+    }
+
+    @Get("check")
+    @UseGuards(AuthenticatedGuard)
+    getUser(@Authorized() user: IUser) {
+        return user;
     }
 }

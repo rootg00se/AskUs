@@ -20,6 +20,7 @@ import { ValidateLoginGuard } from "./decorators/validate-login.decorator";
 import { ConfigService } from "@nestjs/config";
 import { AuthenticatedGuard } from "./guards/authenticated.guard";
 import { GoogleAuthGuard } from "./guards/google-auth.guard";
+import { GitHubAuthGuard } from "./guards/github-auth.guard";
 
 @Controller("auth")
 export class AuthController {
@@ -80,6 +81,16 @@ export class AuthController {
     @Get("oauth2/google/redirect")
     @UseGuards(GoogleAuthGuard)
     googleOAuthRedirect(@Res() res: Response) {
+        res.status(302).redirect(this.CLIENT_URL);
+    }
+
+    @Get("oauth2/github")
+    @UseGuards(GitHubAuthGuard)
+    githubOAuth() {}
+
+    @Get("oauth2/github/redirect")
+    @UseGuards(GitHubAuthGuard)
+    githubOAuthRedirect(@Res() res: Response) {
         res.status(302).redirect(this.CLIENT_URL);
     }
 

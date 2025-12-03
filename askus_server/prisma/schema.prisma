@@ -133,7 +133,7 @@ enum auth_method {
 enum provider_type {
   google
   github
-  telegram
+  discord
 }
 
 enum token_type {

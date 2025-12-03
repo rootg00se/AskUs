@@ -54,7 +54,7 @@ async function bootstrap() {
     app.use(passport.initialize());
     app.use(passport.session());
 
-    app.useGlobalFilters(new GlobalFilter());
+    // app.useGlobalFilters(new GlobalFilter());
 
     app.enableCors({
         origin: config.getOrThrow<string>("CLIENT_ORIGIN"),

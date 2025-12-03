@@ -21,6 +21,7 @@ import { ConfigService } from "@nestjs/config";
 import { AuthenticatedGuard } from "./guards/authenticated.guard";
 import { GoogleAuthGuard } from "./guards/google-auth.guard";
 import { GitHubAuthGuard } from "./guards/github-auth.guard";
+import { DiscordAuthGuard } from "./guards/discord-auth.guard";
 
 @Controller("auth")
 export class AuthController {
@@ -91,6 +92,16 @@ export class AuthController {
     @Get("oauth2/github/redirect")
     @UseGuards(GitHubAuthGuard)
     githubOAuthRedirect(@Res() res: Response) {
+        res.status(302).redirect(this.CLIENT_URL);
+    }
+
+    @Get("oauth2/discord")
+    @UseGuards(DiscordAuthGuard)
+    discordOAuth() {}
+
+    @Get("oauth2/discord/redirect")
+    @UseGuards(DiscordAuthGuard)
+    discordOAuthRedirect(@Res() res: Response) {
         res.status(302).redirect(this.CLIENT_URL);
     }
 

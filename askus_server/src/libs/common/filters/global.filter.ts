@@ -29,7 +29,7 @@ export class GlobalFilter implements ExceptionFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse() as Response;
 
-        if (exception.getStatus() === 401) {
+        if (exception.status === 401 || exception.getStatus() === 401) {
             this.logger.error(exception.message);
 
             return response.status(401).json({

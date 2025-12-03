@@ -7,10 +7,18 @@ import { LocalStrategy } from "./strategies/local.strategy";
 import { SessionSerializer } from "./utils/session.serializer";
 import { GoogleStrategy } from "./strategies/google.strategy";
 import { GithubStrategy } from "./strategies/github.strategy";
+import { DiscordStrategy } from "./strategies/discord.strategy";
 
 @Module({
     imports: [PassportModule.register({ session: true }), UsersModule],
     controllers: [AuthController],
-    providers: [AuthService, LocalStrategy, GoogleStrategy, GithubStrategy, SessionSerializer],
+    providers: [
+        AuthService,
+        LocalStrategy,
+        GoogleStrategy,
+        GithubStrategy,
+        DiscordStrategy,
+        SessionSerializer,
+    ],
 })
 export class AuthModule {}

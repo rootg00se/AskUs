@@ -8,9 +8,20 @@ import { SessionSerializer } from "./utils/session.serializer";
 import { GoogleStrategy } from "./strategies/google.strategy";
 import { GithubStrategy } from "./strategies/github.strategy";
 import { DiscordStrategy } from "./strategies/discord.strategy";
+import { GoogleRecaptchaModule } from "@nestlab/google-recaptcha";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { googleRecaptchaConfig } from "@/config/google-recaptcha.config";
 
 @Module({
-    imports: [PassportModule.register({ session: true }), UsersModule],
+    imports: [
+        GoogleRecaptchaModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: googleRecaptchaConfig,
+            inject: [ConfigService],
+        }),
+        PassportModule.register({ session: true }),
+        UsersModule,
+    ],
     controllers: [AuthController],
     providers: [
         AuthService,

@@ -22,6 +22,7 @@ import { AuthenticatedGuard } from "./guards/authenticated.guard";
 import { GoogleAuthGuard } from "./guards/google-auth.guard";
 import { GitHubAuthGuard } from "./guards/github-auth.guard";
 import { DiscordAuthGuard } from "./guards/discord-auth.guard";
+import { Recaptcha } from "@nestlab/google-recaptcha";
 
 @Controller("auth")
 export class AuthController {
@@ -35,6 +36,7 @@ export class AuthController {
     }
 
     @Post("register")
+    @Recaptcha()
     async register(@Body() userData: RegisterDto, @Req() req: Request) {
         const user = await this.authService.register(userData);
 
@@ -49,6 +51,7 @@ export class AuthController {
     }
 
     @Post("login")
+    @Recaptcha()
     @UseGuards(ValidateLoginGuard, LocalGuard)
     async login(@Authorized() user: IUser) {
         return user;

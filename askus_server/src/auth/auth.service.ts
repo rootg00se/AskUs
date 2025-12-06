@@ -5,10 +5,14 @@ import { hash, verify } from "argon2";
 import { LoginDto } from "./dto/login.dto";
 import { IUser } from "@/libs/common/types/user.type";
 import { OAuthUserDetails } from "@/libs/common/types/oauth-user-details.type";
+import { EmailConfirmationService } from "./email-confirmation/email-confirmation.service";
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly usersService: UsersService) {}
+    constructor(
+        private readonly usersService: UsersService,
+        private readonly emailConfirmationService: EmailConfirmationService,
+    ) {}
 
     async register(userData: RegisterDto) {
         const existingUser = await this.usersService.findByEmail(userData.email);
@@ -23,6 +27,8 @@ export class AuthService {
             displayName: userData.displayName,
             password: hashedPassword,
         });
+
+        await this.emailConfirmationService.sendConfirmationToken(createdUser);
 
         return createdUser;
     }

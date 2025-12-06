@@ -22,6 +22,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.931.0",
     "@aws-sdk/s3-request-presigner": "^3.931.0",
+    "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
@@ -48,8 +49,11 @@
     "passport-github2": "^0.1.12",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -67,8 +71,9 @@
     "@types/passport-discord": "^0.1.15",
     "@types/passport-google-oauth20": "^2.0.17",
     "@types/passport-local": "^1.0.38",
-    "@types/react": "^19.2.4",
+    "@types/react": "^19.2.7",
     "@types/supertest": "^6.0.2",
+    "@types/uuid": "^11.0.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",

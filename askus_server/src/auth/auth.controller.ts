@@ -37,15 +37,8 @@ export class AuthController {
 
     @Post("register")
     @Recaptcha()
-    async register(@Body() userData: RegisterDto, @Req() req: Request) {
+    async register(@Body() userData: RegisterDto) {
         const user = await this.authService.register(userData);
-
-        await new Promise<void>((resolve, reject) => {
-            req.login(user, err => {
-                if (err) reject(err);
-                resolve();
-            });
-        });
 
         return user;
     }

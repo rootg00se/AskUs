@@ -11,6 +11,9 @@ import { DiscordStrategy } from "./strategies/discord.strategy";
 import { GoogleRecaptchaModule } from "@nestlab/google-recaptcha";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { googleRecaptchaConfig } from "@/config/google-recaptcha.config";
+import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module';
+import { EmailConfirmationService } from "./email-confirmation/email-confirmation.service";
+import { MailService } from "@/libs/mail/mail.service";
 
 @Module({
     imports: [
@@ -21,6 +24,7 @@ import { googleRecaptchaConfig } from "@/config/google-recaptcha.config";
         }),
         PassportModule.register({ session: true }),
         UsersModule,
+        EmailConfirmationModule,
     ],
     controllers: [AuthController],
     providers: [
@@ -29,7 +33,7 @@ import { googleRecaptchaConfig } from "@/config/google-recaptcha.config";
         GoogleStrategy,
         GithubStrategy,
         DiscordStrategy,
-        SessionSerializer,
+        SessionSerializer
     ],
 })
 export class AuthModule {}

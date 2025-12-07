@@ -14,6 +14,7 @@ import { googleRecaptchaConfig } from "@/config/google-recaptcha.config";
 import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module';
 import { EmailConfirmationService } from "./email-confirmation/email-confirmation.service";
 import { MailService } from "@/libs/mail/mail.service";
+import { PasswordModule } from './password/password.module';
 
 @Module({
     imports: [
@@ -25,6 +26,7 @@ import { MailService } from "@/libs/mail/mail.service";
         PassportModule.register({ session: true }),
         UsersModule,
         EmailConfirmationModule,
+        PasswordModule,
     ],
     controllers: [AuthController],
     providers: [

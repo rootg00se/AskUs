@@ -5,6 +5,7 @@ export interface IUser {
     email: string;
     display_name: string;
     avatar_url: string | null;
+    phone: string | null,
     is_verified: boolean;
     is_two_factor_enabled: boolean;
     method: auth_method;

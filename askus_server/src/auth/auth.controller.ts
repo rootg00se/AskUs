@@ -6,6 +6,7 @@ import {
     Post,
     Req,
     Res,
+    UnauthorizedException,
     UseGuards,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
@@ -21,6 +22,8 @@ import { GoogleAuthGuard } from "./guards/google-auth.guard";
 import { GitHubAuthGuard } from "./guards/github-auth.guard";
 import { DiscordAuthGuard } from "./guards/discord-auth.guard";
 import { Recaptcha } from "@nestlab/google-recaptcha";
+import { TwoFactorAuthService } from "./two-factor-auth/two-factor-auth.service";
+import { EmailConfirmationService } from "./email-confirmation/email-confirmation.service";
 
 @Controller("auth")
 export class AuthController {
@@ -29,6 +32,8 @@ export class AuthController {
     constructor(
         private readonly authService: AuthService,
         private readonly configService: ConfigService,
+        private readonly twoFactorAuthService: TwoFactorAuthService,
+        private readonly emailConfirmationService: EmailConfirmationService,
     ) {
         this.CLIENT_URL = configService.getOrThrow<string>("CLIENT_ORIGIN");
     }
@@ -44,7 +49,33 @@ export class AuthController {
     @Post("login")
     @Recaptcha()
     @UseGuards(ValidateLoginGuard, LocalGuard)
-    async login(@Authorized() user: IUser) {
+    async login(@Authorized() user: IUser, @Req() req: Request) {
+        if (!user.is_verified) {
+            await this.emailConfirmationService.sendConfirmationToken(user);
+
+            throw new UnauthorizedException(
+                "Your email isn't confirmed. Check your email for confirmation link",
+            );
+        }
+
+        if (user.is_two_factor_enabled) {
+            await this.twoFactorAuthService.sendTwoFactorToken(user.user_id, user.phone as string);
+
+            req.session.preAuthUserId = user.user_id;
+
+            return {
+                twoFactorRequired: true,
+                message: "Two factor code was send on phone number",
+            };
+        }
+
+        await new Promise<void>((resolve, reject) => {
+            req.login(user, err => {
+                if (err) reject(err);
+                resolve();
+            });
+        });
+
         return user;
     }
 

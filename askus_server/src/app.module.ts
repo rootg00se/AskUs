@@ -4,6 +4,7 @@ import { IS_DEV } from "./libs/common/utils/is-dev.util";
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { SmsModule } from './libs/sms/sms.module';
 
 @Module({
     imports: [
@@ -13,7 +14,8 @@ import { AuthModule } from './auth/auth.module';
         }),
         PrismaModule,
         UsersModule,
-        AuthModule
+        AuthModule,
+        SmsModule
     ],
 })
 

@@ -12,9 +12,8 @@ import { GoogleRecaptchaModule } from "@nestlab/google-recaptcha";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { googleRecaptchaConfig } from "@/config/google-recaptcha.config";
 import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module';
-import { EmailConfirmationService } from "./email-confirmation/email-confirmation.service";
-import { MailService } from "@/libs/mail/mail.service";
 import { PasswordModule } from './password/password.module';
+import { TwoFactorAuthModule } from './two-factor-auth/two-factor-auth.module';
 
 @Module({
     imports: [
@@ -27,6 +26,7 @@ import { PasswordModule } from './password/password.module';
         UsersModule,
         EmailConfirmationModule,
         PasswordModule,
+        TwoFactorAuthModule,
     ],
     controllers: [AuthController],
     providers: [

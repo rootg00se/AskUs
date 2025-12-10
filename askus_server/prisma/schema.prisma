@@ -116,6 +116,7 @@ model users {
   is_two_factor_enabled Boolean     @default(false)
   created_at            DateTime    @default(now()) @db.Timestamp(6)
   method                auth_method
+  phone                 String?     @db.VarChar(20)
   accounts              accounts[]
   answers               answers[]
   posts                 posts[]

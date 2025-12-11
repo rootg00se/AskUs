@@ -6,12 +6,15 @@ import { LoginDto } from "./dto/login.dto";
 import { IUser } from "@/libs/common/types/user.type";
 import { OAuthUserDetails } from "@/libs/common/types/oauth-user-details.type";
 import { EmailConfirmationService } from "./email-confirmation/email-confirmation.service";
+import { PrismaService } from "@/prisma/prisma.service";
+import { ValidateOAuthUserType } from "./types/validate-oauth-user.type";
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly usersService: UsersService,
         private readonly emailConfirmationService: EmailConfirmationService,
+        private readonly prismaService: PrismaService
     ) {}
 
     async register(userData: RegisterDto) {
@@ -51,7 +54,7 @@ export class AuthService {
         return userResult;
     }
 
-    async validateOAuthUser(userDetails: OAuthUserDetails) {
+    private async findOrCreateOAuthUserByEmail(userDetails: OAuthUserDetails) {
         const user = await this.usersService.findByEmail(userDetails.email);
         if (user) return user;
 
@@ -61,5 +64,29 @@ export class AuthService {
         });
 
         return createdUser;
+    }
+
+    async validateOAuthUser(validateOAuthUserType: ValidateOAuthUserType) {
+        const user = await this.findOrCreateOAuthUserByEmail({
+            email: validateOAuthUserType.email, 
+            displayName: validateOAuthUserType.displayName
+        });
+
+        await this.usersService.createUserAccount({
+            userId: user.user_id,
+            provider: validateOAuthUserType.providerType,
+            providerAccountId: validateOAuthUserType.profileId,
+            accessToken: validateOAuthUserType.accessToken,
+            refreshToken: validateOAuthUserType.refreshToken,
+        });
+
+        if (!user.is_verified) {
+            await this.prismaService.users.update({
+                where: { user_id: user.user_id },
+                data: { is_verified: true },
+            });
+        }
+
+        return user;
     }
 }

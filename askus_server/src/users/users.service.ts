@@ -3,14 +3,17 @@ import { Injectable } from "@nestjs/common";
 import { auth_method } from "@prisma/generated";
 import { CreateUser } from "./types/create-user.type";
 import { OAuthUserDetails } from "@/libs/common/types/oauth-user-details.type";
-import { CreateAccount } from "@/libs/common/types/create-account.type";
+import { CreateAccount } from "@/users/types/create-account.type";
 
 @Injectable()
 export class UsersService {
     constructor(private readonly prismaService: PrismaService) {}
 
     async findByEmail(email: string) {
-        return await this.prismaService.users.findUnique({ where: { email }, include: { accounts: true } });
+        return await this.prismaService.users.findUnique({
+            where: { email },
+            include: { accounts: true },
+        });
     }
 
     async findById(userId: string) {
@@ -40,7 +43,7 @@ export class UsersService {
                 email: oauthUserDetails.email,
                 display_name: oauthUserDetails.displayName,
                 method: auth_method.oauth,
-                is_verified: true
+                is_verified: true,
             },
             omit: {
                 password_hash: true,
@@ -63,7 +66,7 @@ export class UsersService {
                     access_token: accountData.accessToken,
                     user_id: accountData.userId,
                     provider_account_id: accountData.providerAccountId,
-                    refresh_token: accountData.refreshToken || null
+                    refresh_token: accountData.refreshToken || null,
                 },
             });
         }

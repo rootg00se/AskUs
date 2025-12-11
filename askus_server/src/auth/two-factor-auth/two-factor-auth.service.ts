@@ -10,7 +10,7 @@ export class TwoFactorAuthService {
         private readonly prismaService: PrismaService,
     ) {}
 
-    public async validateTwoFactorToken(userId: string, code: string) {
+    async validateTwoFactorToken(userId: string, code: string) {
         const existingToken = await this.prismaService.tokens.findFirst({
             where: {
                 user_id: userId,
@@ -34,7 +34,7 @@ export class TwoFactorAuthService {
         await this.prismaService.tokens.delete({ where: { token_id: existingToken.token_id } });
     }
 
-    public async sendTwoFactorToken(userId: string, phone: string) {
+    async sendTwoFactorToken(userId: string, phone: string) {
         const twoFactorToken = await this.generateTwoFactorToken(userId);
         const smsText = `Value: '${twoFactorToken.token}'`;
 

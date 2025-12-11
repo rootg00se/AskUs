@@ -18,12 +18,11 @@ import { type IUser } from "@/libs/common/types/user.type";
 import { ValidateLoginGuard } from "./decorators/validate-login.decorator";
 import { ConfigService } from "@nestjs/config";
 import { AuthenticatedGuard } from "./guards/authenticated.guard";
-import { GoogleAuthGuard } from "./guards/google-auth.guard";
-import { GitHubAuthGuard } from "./guards/github-auth.guard";
-import { DiscordAuthGuard } from "./guards/discord-auth.guard";
 import { Recaptcha } from "@nestlab/google-recaptcha";
 import { TwoFactorAuthService } from "./two-factor-auth/two-factor-auth.service";
 import { EmailConfirmationService } from "./email-confirmation/email-confirmation.service";
+import { OAuth2Guard } from "./guards/oauth2.guard";
+import { provider_type } from "@prisma/generated";
 
 @Controller("auth")
 export class AuthController {
@@ -101,31 +100,31 @@ export class AuthController {
     }
 
     @Get("oauth2/google")
-    @UseGuards(GoogleAuthGuard)
+    @UseGuards(OAuth2Guard(provider_type.google))
     googleOAuth() {}
 
     @Get("oauth2/google/redirect")
-    @UseGuards(GoogleAuthGuard)
+    @UseGuards(OAuth2Guard(provider_type.google))
     googleOAuthRedirect(@Res() res: Response) {
         res.status(302).redirect(this.CLIENT_URL);
     }
 
     @Get("oauth2/github")
-    @UseGuards(GitHubAuthGuard)
+    @UseGuards(OAuth2Guard(provider_type.github))
     githubOAuth() {}
 
     @Get("oauth2/github/redirect")
-    @UseGuards(GitHubAuthGuard)
+    @UseGuards(OAuth2Guard(provider_type.github))
     githubOAuthRedirect(@Res() res: Response) {
         res.status(302).redirect(this.CLIENT_URL);
     }
 
     @Get("oauth2/discord")
-    @UseGuards(DiscordAuthGuard)
+    @UseGuards(OAuth2Guard(provider_type.discord))
     discordOAuth() {}
 
     @Get("oauth2/discord/redirect")
-    @UseGuards(DiscordAuthGuard)
+    @UseGuards(OAuth2Guard(provider_type.discord))
     discordOAuthRedirect(@Res() res: Response) {
         res.status(302).redirect(this.CLIENT_URL);
     }

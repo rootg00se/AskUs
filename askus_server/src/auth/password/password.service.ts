@@ -56,7 +56,7 @@ export class PasswordService {
     }
 
     private async generatePasswordResetToken(email: string) {
-        const existingUser = await this.usersService.findByEmail(email);
+        const existingUser = await this.usersService.findByEmail(email); 
         if (!existingUser) throw new NotFoundException("User with that email was not found");
 
         const token = v4();

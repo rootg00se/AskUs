@@ -1,11 +1,4 @@
-import {
-    ArgumentsHost,
-    Catch,
-    ExceptionFilter,
-    HttpException,
-    Logger,
-    UnauthorizedException,
-} from "@nestjs/common";
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger } from "@nestjs/common";
 import { Response } from "express";
 import { appendFileSync, existsSync, mkdirSync } from "fs";
 import { dirname, join } from "path";
@@ -29,18 +22,6 @@ export class GlobalFilter implements ExceptionFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse() as Response;
 
-        if (exception.status === 401 || exception.getStatus() === 401) {
-            this.logger.error(exception.message);
-
-            return response.status(401).json({
-                status: exception.getStatus(),
-                error: exception.message,
-                timestamp: new Date().toISOString(),
-                path: ctx.getRequest().url,
-                message: (exception.getResponse() as any).message,
-            });
-        }
-
         const status = exception instanceof HttpException ? exception.getStatus() : 500;
 
         const error =
@@ -62,7 +43,7 @@ export class GlobalFilter implements ExceptionFilter {
             error,
             timestamp: new Date().toISOString(),
             path: ctx.getRequest().url,
-            message: message,
+            message: message instanceof Array ? [...message] : message,
         });
     }
 }

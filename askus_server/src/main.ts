@@ -10,6 +10,7 @@ import { createClient, RedisClientType } from "redis";
 import session from "express-session";
 import passport from "passport";
 import { sessionConfig } from "./config/session.config";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -18,11 +19,27 @@ async function bootstrap() {
     const redis: RedisClientType = createClient({ url: config.getOrThrow<string>("REDIS_URI") });
     await redis.connect();
 
+    app.setGlobalPrefix("api/v1");
+
+    const swaggerConfig = new DocumentBuilder()
+        .setTitle("AskUs API")
+        .setDescription("API documentation for ask us web-app")
+        .setVersion("1.0.0")
+        .setContact("RootG00se", "http://localhost:5137", "gorc141408@gmail.com")
+        .addCookieAuth("session")
+        .build();
+
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+
+    SwaggerModule.setup("api/docs", app, document, {
+        jsonDocumentUrl: "/swagger.json",
+        yamlDocumentUrl: "/swagger.yaml",
+        customSiteTitle: "AskUs API Docs",
+    });
+
     app.use(cookieParser(config.getOrThrow<string>("COOKIES_SECRET")));
     app.useLogger(new CustomLogger());
     app.useGlobalInterceptors(new GlobalInterceptor());
-
-    app.setGlobalPrefix("api/v1");
 
     app.useGlobalPipes(
         new ValidationPipe({

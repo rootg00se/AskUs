@@ -30,6 +30,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.3",
     "@nestlab/google-recaptcha": "^3.10.0",
     "@prisma/adapter-pg": "^7.0.0",
     "@prisma/client": "6.15.0",
@@ -52,7 +53,7 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "react": "^19.2.1",
-    "react-dom": "^19.2.1",
+    "react-dom": "19.2.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "uuid": "^13.0.0"

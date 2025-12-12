@@ -2,6 +2,7 @@ import { Controller, Get, Param, Req, Res } from "@nestjs/common";
 import { EmailConfirmationService } from "./email-confirmation.service";
 import { type Request, type Response } from "express";
 import { ConfigService } from "@nestjs/config";
+import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 
 @Controller("auth/email-confirmation")
 export class EmailConfirmationController {
@@ -15,6 +16,11 @@ export class EmailConfirmationController {
     }
 
     @Get(":token")
+    @ApiOperation({
+        summary: "Confirm email",
+        description: "After following confirmation link on email this route will verify user",
+    })
+    @ApiOkResponse({ description: "Email confirmed" })
     public async newConfirmation(
         @Req() req: Request,
         @Res() res: Response,

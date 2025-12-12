@@ -10,6 +10,8 @@ import { TwoFactorAuthService } from "./two-factor-auth.service";
 import { type Request } from "express";
 import { Verify2FADto } from "./dto/verify2FA.dto";
 import { UsersService } from "@/users/users.service";
+import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { UserResponse } from "../utils/docsResponses/user.response";
 
 @Controller("auth/2fa")
 export class TwoFactorAuthController {
@@ -19,6 +21,11 @@ export class TwoFactorAuthController {
     ) {}
 
     @Post("verify")
+    @ApiOperation({
+        summary: "Verifying 2fa code",
+        description: "Verifying user's 2fa code which he gets by sms",
+    })
+    @ApiOkResponse({ description: "Password reset", type: UserResponse })
     async verify2FA(@Body() verify2FADto: Verify2FADto, @Req() req: Request) {
         const userId = req.session.preAuthUserId;
         if (!userId) throw new BadRequestException("No partially authenticated session");

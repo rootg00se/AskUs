@@ -5,9 +5,17 @@ export interface IUser {
     email: string;
     display_name: string;
     avatar_url: string | null;
-    phone: string | null,
+    phone: string | null;
     is_verified: boolean;
     is_two_factor_enabled: boolean;
     method: auth_method;
     created_at: Date;
+    user_ranks: {
+        points: number;
+        updated_at: Date;
+        ranks: {
+            name: string;
+            badge_url: string;
+        };
+    } | null;
 }

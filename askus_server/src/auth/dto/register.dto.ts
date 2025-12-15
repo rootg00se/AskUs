@@ -16,9 +16,9 @@ export class RegisterDto {
         example: "RootG00se",
         type: String,
     })
-    @IsString({ message: "Email should be a string" })
-    @IsNotEmpty({ message: "Email can't be empty" })
-    @Length(2, 64, { message: "Email length should be between 2 and 64 characters" })
+    @IsString({ message: "Nickname should be a string" })
+    @IsNotEmpty({ message: "Nickname can't be empty" })
+    @Length(2, 64, { message: "Nickname length should be between 2 and 64 characters" })
     displayName: string;
 
     @ApiProperty({

@@ -51,7 +51,7 @@ model posts {
   title              String            @db.VarChar(64)
   description        String            @db.VarChar(255)
   is_closed          Boolean           @default(false)
-  likes              Int
+  likes              Int               @default(0)
   user_id            String            @db.Uuid
   post_difficulty_id String            @db.Uuid
   created_at         DateTime          @default(now()) @db.Timestamp(6)
@@ -99,7 +99,7 @@ model tokens {
 model user_ranks {
   user_rank_id String   @id(map: "pk_user_ranks_user_rank_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   points       Int      @default(0)
-  rank_id      String   @db.Uuid
+  rank_id      String   @default(dbgenerated("'9f9b1b27-4c38-4b4a-9533-a4b116d4d40b'::uuid")) @db.Uuid
   user_id      String   @unique @db.Uuid
   updated_at   DateTime @default(now()) @db.Timestamp(6)
   ranks        ranks    @relation(fields: [rank_id], references: [rank_id], onDelete: Cascade, map: "fk_user_ranks_ranks")

@@ -4,12 +4,14 @@ import { auth_method } from "@prisma/generated";
 import { CreateUser } from "./types/create-user.type";
 import { OAuthUserDetails } from "@/libs/common/types/oauth-user-details.type";
 import { CreateAccount } from "@/users/types/create-account.type";
-import { UpdateNicknameDto } from "./dto/update-nickname.dto";
-import { Toggle2FADto } from "./dto/update-2fa.dto";
+import { S3StorageService } from "@/libs/s3-storage/s3-storage.service";
 
 @Injectable()
 export class UsersService {
-    constructor(private readonly prismaService: PrismaService) {}
+    constructor(
+        private readonly prismaService: PrismaService,
+        private readonly s3StorageService: S3StorageService,
+    ) {}
 
     async findByEmail(email: string) {
         return await this.prismaService.users.findUnique({
@@ -207,6 +209,39 @@ export class UsersService {
             data: {
                 phone,
                 is_two_factor_enabled: !user?.is_two_factor_enabled,
+            },
+            include: {
+                user_ranks: {
+                    select: {
+                        points: true,
+                        updated_at: true,
+                        ranks: {
+                            select: {
+                                name: true,
+                                badge_url: true,
+                            },
+                        },
+                    },
+                },
+            },
+            omit: {
+                password_hash: true,
+            },
+        });
+
+        return updatedUser;
+    }
+
+    async updateUserAvatar(userId: string, file: Express.Multer.File) {
+        const avatarFolder = "avatars";
+        const avatarUrl = await this.s3StorageService.uploadFile(file, avatarFolder);
+
+        const updatedUser = await this.prismaService.users.update({
+            where: {
+                user_id: userId,
+            },
+            data: {
+                avatar_url: avatarUrl,
             },
             include: {
                 user_ranks: {

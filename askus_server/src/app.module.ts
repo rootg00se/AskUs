@@ -5,6 +5,7 @@ import { PrismaModule } from "./prisma/prisma.module";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
 import { SmsModule } from "./libs/sms/sms.module";
+import { S3StorageModule } from './libs/s3-storage/s3-storage.module';
 
 @Module({
     imports: [
@@ -15,7 +16,8 @@ import { SmsModule } from "./libs/sms/sms.module";
         PrismaModule,
         UsersModule,
         AuthModule,
-        SmsModule
+        SmsModule,
+        S3StorageModule
     ],
 })
 export class AppModule {}

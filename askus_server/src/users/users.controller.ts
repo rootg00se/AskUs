@@ -15,7 +15,7 @@ import { AuthenticatedGuard } from "@/auth/guards/authenticated.guard";
 import { Authorized } from "@/auth/decorators/authorized.decorator";
 import { type IUser } from "@/libs/common/types/user.type";
 import { UpdateNicknameDto } from "./dto/update-nickname.dto";
-import { Toggle2FADto } from "./dto/update-2fa.dto";
+import { Enable2FADto } from "./dto/update-2fa.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller("users")
@@ -46,9 +46,14 @@ export class UsersController {
         return await this.usersService.updateUserNickname(userId, updateNicknameDto.nickname);
     }
 
-    @Patch("2fa")
-    async toggleUser2FA(@Authorized("user_id") userId: string, @Body() toggle2FADto: Toggle2FADto) {
-        return await this.usersService.toggleUser2FA(userId, toggle2FADto.phone);
+    @Patch("2fa/enable")
+    async enableUser2FA(@Authorized("user_id") userId: string, @Body() enable2FADto: Enable2FADto) {
+        return await this.usersService.enableUser2FA(userId, enable2FADto.phone);
+    }
+
+    @Patch("2fa/disable")
+    async disableUser2FA(@Authorized("user_id") userId: string) {
+        return await this.usersService.disableUser2FA(userId);
     }
 
     @Patch("avatar")

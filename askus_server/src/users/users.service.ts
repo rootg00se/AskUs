@@ -1,10 +1,11 @@
 import { PrismaService } from "@/prisma/prisma.service";
 import { Injectable } from "@nestjs/common";
-import { auth_method } from "@prisma/generated";
+import { auth_method, Prisma } from "@prisma/generated";
 import { CreateUser } from "./types/create-user.type";
 import { OAuthUserDetails } from "@/libs/common/types/oauth-user-details.type";
 import { CreateAccount } from "@/users/types/create-account.type";
 import { S3StorageService } from "@/libs/s3-storage/s3-storage.service";
+import { USER_RANK_INCLUDE } from "./utils/user.constants";
 
 @Injectable()
 export class UsersService {
@@ -24,18 +25,7 @@ export class UsersService {
         return await this.prismaService.users.findUnique({
             where: { email },
             include: {
-                user_ranks: {
-                    select: {
-                        points: true,
-                        updated_at: true,
-                        ranks: {
-                            select: {
-                                name: true,
-                                badge_url: true,
-                            },
-                        },
-                    },
-                },
+                ...USER_RANK_INCLUDE,
                 accounts: true,
             },
         });
@@ -45,18 +35,7 @@ export class UsersService {
         return await this.prismaService.users.findUnique({
             where: { user_id: userId },
             include: {
-                user_ranks: {
-                    select: {
-                        points: true,
-                        updated_at: true,
-                        ranks: {
-                            select: {
-                                name: true,
-                                badge_url: true,
-                            },
-                        },
-                    },
-                },
+                ...USER_RANK_INCLUDE,
             },
             omit: { password_hash: true },
         });
@@ -76,22 +55,9 @@ export class UsersService {
                 },
             },
             include: {
-                user_ranks: {
-                    select: {
-                        points: true,
-                        updated_at: true,
-                        ranks: {
-                            select: {
-                                name: true,
-                                badge_url: true,
-                            },
-                        },
-                    },
-                },
+                ...USER_RANK_INCLUDE,
             },
-            omit: {
-                password_hash: true,
-            },
+            omit: { password_hash: true },
         });
     }
 
@@ -109,22 +75,9 @@ export class UsersService {
                 },
             },
             include: {
-                user_ranks: {
-                    select: {
-                        points: true,
-                        updated_at: true,
-                        ranks: {
-                            select: {
-                                name: true,
-                                badge_url: true,
-                            },
-                        },
-                    },
-                },
+                ...USER_RANK_INCLUDE,
             },
-            omit: {
-                password_hash: true,
-            },
+            omit: { password_hash: true },
         });
     }
 
@@ -151,9 +104,7 @@ export class UsersService {
 
     async getUserPosts(userId: string) {
         const userPosts = await this.prismaService.posts.findMany({
-            where: {
-                user_id: userId,
-            },
+            where: { user_id: userId },
         });
 
         return userPosts;
@@ -161,9 +112,7 @@ export class UsersService {
 
     async getUserAnswers(userId: string) {
         const userAnswers = await this.prismaService.answers.findMany({
-            where: {
-                user_id: userId,
-            },
+            where: { user_id: userId },
         });
 
         return userAnswers;
@@ -171,62 +120,44 @@ export class UsersService {
 
     async updateUserNickname(userId: string, nickname: string) {
         const updatedUser = await this.prismaService.users.update({
-            where: {
-                user_id: userId,
-            },
-            data: {
-                display_name: nickname,
-            },
+            where: { user_id: userId },
+            data: { display_name: nickname },
             include: {
-                user_ranks: {
-                    select: {
-                        points: true,
-                        updated_at: true,
-                        ranks: {
-                            select: {
-                                name: true,
-                                badge_url: true,
-                            },
-                        },
-                    },
-                },
+                ...USER_RANK_INCLUDE,
             },
-            omit: {
-                password_hash: true,
-            },
+            omit: { password_hash: true },
         });
 
         return updatedUser;
     }
 
-    async toggleUser2FA(userId: string, phone: string) {
-        const user = await this.prismaService.users.findUnique({ where: { user_id: userId } });
-
+    async enableUser2FA(userId: string, phone: string) {
         const updatedUser = await this.prismaService.users.update({
-            where: {
-                user_id: userId,
-            },
+            where: { user_id: userId },
             data: {
                 phone,
-                is_two_factor_enabled: !user?.is_two_factor_enabled,
+                is_two_factor_enabled: true,
             },
             include: {
-                user_ranks: {
-                    select: {
-                        points: true,
-                        updated_at: true,
-                        ranks: {
-                            select: {
-                                name: true,
-                                badge_url: true,
-                            },
-                        },
-                    },
-                },
+                ...USER_RANK_INCLUDE,
             },
-            omit: {
-                password_hash: true,
+            omit: { password_hash: true },
+        });
+
+        return updatedUser;
+    }
+
+    async disableUser2FA(userId: string) {
+        const updatedUser = await this.prismaService.users.update({
+            where: { user_id: userId },
+            data: {
+                phone: null,
+                is_two_factor_enabled: false,
             },
+            include: {
+                ...USER_RANK_INCLUDE,
+            },
+            omit: { password_hash: true },
         });
 
         return updatedUser;
@@ -237,29 +168,12 @@ export class UsersService {
         const avatarUrl = await this.s3StorageService.uploadFile(file, avatarFolder);
 
         const updatedUser = await this.prismaService.users.update({
-            where: {
-                user_id: userId,
-            },
-            data: {
-                avatar_url: avatarUrl,
-            },
+            where: { user_id: userId },
+            data: { avatar_url: avatarUrl },
             include: {
-                user_ranks: {
-                    select: {
-                        points: true,
-                        updated_at: true,
-                        ranks: {
-                            select: {
-                                name: true,
-                                badge_url: true,
-                            },
-                        },
-                    },
-                },
+                ...USER_RANK_INCLUDE,
             },
-            omit: {
-                password_hash: true,
-            },
+            omit: { password_hash: true },
         });
 
         return updatedUser;

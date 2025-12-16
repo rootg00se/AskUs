@@ -4,7 +4,7 @@ import { Recaptcha } from "@nestlab/google-recaptcha";
 import { PasswordResetDto } from "./dto/password-reset.dto";
 import { NewPasswordDto } from "./dto/new-password.dto";
 import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
-import { UserResponse } from "../utils/docsResponses/user.response";
+import { UserResponse } from "../../shared/docs-responses/user.response";
 
 @Controller("auth/password")
 export class PasswordController {

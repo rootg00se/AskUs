@@ -23,7 +23,7 @@ import { EmailConfirmationService } from "./email-confirmation/email-confirmatio
 import { OAuth2Guard } from "./guards/oauth2.guard";
 import { provider_type } from "@prisma/generated";
 import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
-import { UserResponse } from "./utils/docsResponses/user.response";
+import { UserResponse } from "../shared/docs-responses/user.response";
 import { LoginDto } from "./dto/login.dto";
 
 @Controller("auth")

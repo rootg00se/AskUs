@@ -1,6 +1,7 @@
 import { ResponseDto } from "@/shared/dto/response.dto";
 import { ApiProperty } from "@nestjs/swagger";
 import { auth_method } from "@prisma/generated";
+import { UserRanksDto } from "../dto/user-rank.dto";
 
 class UserResponseDto {
     @ApiProperty({
@@ -65,6 +66,9 @@ class UserResponseDto {
         type: String,
     })
     phone: string | null;
+
+    @ApiProperty({ type: UserRanksDto })
+    user_ranks: UserRanksDto;
 }
 
 export class UserResponse extends ResponseDto {

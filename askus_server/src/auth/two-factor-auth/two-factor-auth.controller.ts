@@ -11,7 +11,7 @@ import { type Request } from "express";
 import { Verify2FADto } from "./dto/verify2FA.dto";
 import { UsersService } from "@/users/users.service";
 import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
-import { UserResponse } from "../utils/docsResponses/user.response";
+import { UserResponse } from "../../shared/docs-responses/user.response";
 
 @Controller("auth/2fa")
 export class TwoFactorAuthController {

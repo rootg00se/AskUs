@@ -105,6 +105,10 @@ export class UsersService {
     async getUserPosts(userId: string) {
         const userPosts = await this.prismaService.posts.findMany({
             where: { user_id: userId },
+            include: {
+                post_difficulties: true,
+            },
+            omit: { user_id: true, post_difficulty_id: true },
         });
 
         return userPosts;
@@ -113,6 +117,7 @@ export class UsersService {
     async getUserAnswers(userId: string) {
         const userAnswers = await this.prismaService.answers.findMany({
             where: { user_id: userId },
+            omit: { user_id: true, parent_id: true },
         });
 
         return userAnswers;

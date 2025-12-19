@@ -107,11 +107,19 @@ export class UsersService {
             where: { user_id: userId },
             include: {
                 post_difficulties: true,
+                _count: {
+                    select: {
+                        post_likes: true,
+                    },
+                },
             },
             omit: { user_id: true, post_difficulty_id: true },
         });
 
-        return userPosts;
+        return userPosts.map(({ _count, ...post }) => ({
+            ...post,
+            likes: _count.post_likes,
+        }));
     }
 
     async getUserAnswers(userId: string) {

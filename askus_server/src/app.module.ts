@@ -6,6 +6,7 @@ import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
 import { SmsModule } from "./libs/sms/sms.module";
 import { S3StorageModule } from './libs/s3-storage/s3-storage.module';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
     imports: [
@@ -14,10 +15,11 @@ import { S3StorageModule } from './libs/s3-storage/s3-storage.module';
             isGlobal: true,
         }),
         PrismaModule,
-        UsersModule,
         AuthModule,
+        UsersModule,
         SmsModule,
-        S3StorageModule
+        S3StorageModule,
+        PostsModule
     ],
 })
 export class AppModule {}

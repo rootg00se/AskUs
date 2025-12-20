@@ -112,13 +112,19 @@ export class UsersService {
                         post_likes: true,
                     },
                 },
+                posts_tags: {
+                    select: {
+                        tags: { select: { tag: true } },
+                    },
+                },
             },
             omit: { user_id: true, post_difficulty_id: true },
         });
 
-        return userPosts.map(({ _count, ...post }) => ({
+        return userPosts.map(({ _count, posts_tags, ...post }) => ({
             ...post,
             likes: _count.post_likes,
+            tags: posts_tags.map(pt => pt.tags.tag),
         }));
     }
 

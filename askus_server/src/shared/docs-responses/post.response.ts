@@ -46,6 +46,13 @@ class PostResponseDto {
     likes: number;
 
     @ApiProperty({
+        description: "All tags of the post",
+        example: ["books", "education"],
+        type: [String],
+    })
+    tags: string[];
+
+    @ApiProperty({
         description: "Time when post was created",
         example: Date.now(),
         type: Date,

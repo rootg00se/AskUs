@@ -32,7 +32,7 @@ export class S3StorageService {
             Bucket: this.BUCKET,
             Key: filename,
             Body: file.buffer,
-            ContentType: file.mimetype,
+            ContentType: `${file.mimetype}; charset=utf-8`,
         });
 
         await this.CLIENT.send(command);

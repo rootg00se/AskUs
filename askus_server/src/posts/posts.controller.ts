@@ -3,7 +3,6 @@ import {
     Body,
     Controller,
     Delete,
-    FileTypeValidator,
     Get,
     MaxFileSizeValidator,
     Param,
@@ -25,19 +24,23 @@ import { CreatePostDto } from "./dto/create-post.dto";
 import { validateMarkdown } from "./utils/validate-markdown.util";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
+import { UpdatePostDto } from "./dto/update-post.dto";
 
 @Controller("posts")
 export class PostsController {
     constructor(private readonly postsService: PostsService) {}
 
     @Get()
-    async getAllPosts(@Query() getAllPostsDto: GetAllPostsDto) {
-        return await this.postsService.getAllPosts(getAllPostsDto);
+    async getAllPosts(
+        @Query() getAllPostsDto: GetAllPostsDto,
+        @Authorized("user_id") userId: string,
+    ) {
+        return await this.postsService.getAllPosts(getAllPostsDto, userId);
     }
 
     @Get(":id")
-    async getPostById(@Param("id") id: string) {
-        return await this.postsService.getPostById(id);
+    async getPostById(@Param("id") id: string, @Authorized("user_id") userId: string) {
+        return await this.postsService.getPostById(id, userId);
     }
 
     @Post()
@@ -83,17 +86,25 @@ export class PostsController {
 
     @Put(":id")
     @UseGuards(AuthenticatedGuard)
-    updatePostInformation() {}
+    async updatePostInformation(@Body() updatePostDto: UpdatePostDto, @Param("id") postId: string) {
+        return await this.postsService.updatePost(postId, updatePostDto);
+    }
 
     @Post(":id/like")
     @UseGuards(AuthenticatedGuard)
-    likePost() {}
+    async likePost(@Param("id") postId: string, @Authorized("user_id") userId: string) {
+        return await this.postsService.likePost(postId, userId);
+    }
 
     @Delete(":id")
     @UseGuards(AuthenticatedGuard)
-    deletePost() {}
+    async deletePost(@Param("id") postId: string) {
+        return await this.postsService.deletePost(postId);
+    }
 
     @Delete(":id/like")
     @UseGuards(AuthenticatedGuard)
-    dislikePost() {}
+    async dislikePost(@Param("id") postId: string, @Authorized("user_id") userId: string) {
+        return await this.postsService.dislikePost(postId, userId);
+    }
 }

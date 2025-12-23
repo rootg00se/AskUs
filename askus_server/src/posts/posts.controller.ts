@@ -81,8 +81,27 @@ export class PostsController {
     }
 
     @Patch(":id/data")
+    @UseInterceptors(FileInterceptor("post"))
     @UseGuards(AuthenticatedGuard)
-    updatePostData() {}
+    async updatePostData(
+        @UploadedFile(
+            new ParseFilePipe({
+                validators: [
+                    new MaxFileSizeValidator({
+                        maxSize: 1000 * 1000 * 50,
+                        message: "Can't load files larger than 5 mb",
+                    }),
+                ],
+            }),
+        )
+        file: Express.Multer.File,
+        @Param("id") postId: string,
+    ) {
+        validateMarkdown(file);
+        const result = await this.postsService.updatePostData(postId, file);
+
+        return result
+    }
 
     @Put(":id")
     @UseGuards(AuthenticatedGuard)

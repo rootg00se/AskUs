@@ -222,6 +222,42 @@ export class PostsService {
         };
     }
 
+    async updatePostData(postId: string, file: Express.Multer.File) {
+        const postFolder = "posts";
+        const dataUrl = await this.s3StorageService.uploadFile(file, postFolder);
+
+        const createdPost = await this.prismaService.posts.update({
+            where: { post_id: postId },
+            data: { data_url: dataUrl },
+            include: {
+                _count: {
+                    select: { post_likes: true },
+                },
+                post_difficulties: { omit: { post_difficulty_id: true } },
+                users: {
+                    select: {
+                        display_name: true,
+                        avatar_url: true,
+                    },
+                },
+                posts_tags: {
+                    select: {
+                        tags: { select: { tag: true } },
+                    },
+                },
+            },
+            omit: { user_id: true, post_difficulty_id: true },
+        });
+
+        const { _count, posts_tags, ...post } = createdPost;
+
+        return {
+            ...post,
+            likes: _count.post_likes,
+            tags: posts_tags.map(pt => pt.tags.tag),
+        };
+    }
+
     async updatePost(postId: string, updatePostDto: UpdatePostDto) {
         const existingPost = await this.prismaService.posts.findUnique({
             where: { post_id: postId },

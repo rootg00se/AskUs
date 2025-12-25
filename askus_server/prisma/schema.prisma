@@ -60,6 +60,8 @@ model posts {
   post_difficulties  post_difficulties @relation(fields: [post_difficulty_id], references: [post_difficulty_id], onDelete: Cascade, map: "fk_posts_post_difficulties")
   users              users             @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "fk_posts_users")
   posts_tags         posts_tags[]
+
+  @@index([title(ops: raw("gin_trgm_ops"))], map: "idx_posts_title", type: Gin)
 }
 
 model posts_tags {

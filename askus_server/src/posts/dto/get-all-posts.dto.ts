@@ -17,4 +17,7 @@ export class GetAllPostsDto {
 
     @IsOptional()
     difficulty?: string;
+
+    @IsOptional()
+    query?: string;
 }

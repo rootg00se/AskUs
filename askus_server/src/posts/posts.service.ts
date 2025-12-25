@@ -18,10 +18,27 @@ export class PostsService {
         const difficulties = getAllPostsDto.difficulty?.split(",") || [];
         const tags = getAllPostsDto.tags?.split(",") || [];
 
+        let queryPostsId;
+
+        if (getAllPostsDto.query) {
+            queryPostsId = await this.prismaService.$queryRaw<{ post_id: string }[]>`
+                WITH search_words AS (
+                    SELECT unnest(string_to_array(${getAllPostsDto.query}, ' ')) AS word
+                ) SELECT DISTINCT p.post_id FROM posts p
+                JOIN search_words w ON p.title ILIKE '%' || w.word || '%'
+                OR p.title % w.word;
+            `;
+        }
+
         const posts = await this.prismaService.posts.findMany({
             skip: postsToSkip,
             take: pageLimit,
             where: {
+                ...(queryPostsId && {
+                    post_id: {
+                        in: queryPostsId?.map(el => el.post_id),
+                    },
+                }),
                 ...(difficulties.length > 0 && {
                     post_difficulties: {
                         difficulty: {
@@ -36,6 +53,9 @@ export class PostsService {
                         },
                     },
                 })),
+            },
+            orderBy: {
+                created_at: "desc"
             },
             include: {
                 _count: {

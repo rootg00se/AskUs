@@ -1,12 +1,14 @@
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { IS_DEV } from "./libs/common/utils/is-dev.util";
 import { PrismaModule } from "./prisma/prisma.module";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
 import { SmsModule } from "./libs/sms/sms.module";
-import { S3StorageModule } from './libs/s3-storage/s3-storage.module';
-import { PostsModule } from './posts/posts.module';
+import { S3StorageModule } from "./libs/s3-storage/s3-storage.module";
+import { PostsModule } from "./posts/posts.module";
+import { CacheModule } from "@nestjs/cache-manager";
+import { keyvRedisConfig } from "./config/keyv-redis.config";
 
 @Module({
     imports: [
@@ -19,7 +21,13 @@ import { PostsModule } from './posts/posts.module';
         UsersModule,
         SmsModule,
         S3StorageModule,
-        PostsModule
+        PostsModule,
+        CacheModule.registerAsync({
+            isGlobal: true,
+            imports: [ConfigModule],
+            useFactory: keyvRedisConfig,
+            inject: [ConfigService],
+        }),
     ],
 })
 export class AppModule {}

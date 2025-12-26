@@ -25,6 +25,8 @@ import { validateMarkdown } from "./utils/validate-markdown.util";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { UpdatePostDto } from "./dto/update-post.dto";
+import { GetPopularPostsDto } from "./dto/get-popular-posts.dto";
+import { CacheInterceptor, CacheKey } from "@nestjs/cache-manager";
 
 @Controller("posts")
 export class PostsController {
@@ -36,6 +38,16 @@ export class PostsController {
         @Authorized("user_id") userId: string,
     ) {
         return await this.postsService.getAllPosts(getAllPostsDto, userId);
+    }
+
+    @Get("popular")
+    @UseInterceptors(CacheInterceptor)
+    @CacheKey("posts:popular")
+    async getPopularPosts(
+        @Query() getPopularPostsDto: GetPopularPostsDto,
+        @Authorized("user_id") userId: string,
+    ) {
+        return await this.postsService.getPopularPosts(getPopularPostsDto.limit, userId);
     }
 
     @Get(":id")
@@ -100,7 +112,7 @@ export class PostsController {
         validateMarkdown(file);
         const result = await this.postsService.updatePostData(postId, file);
 
-        return result
+        return result;
     }
 
     @Put(":id")

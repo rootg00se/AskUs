@@ -91,6 +91,48 @@ export class PostsService {
         }));
     }
 
+    async getPopularPosts(limit: number = 5, userId?: string) {
+        const posts = await this.prismaService.posts.findMany({
+            orderBy: {
+                post_likes: {
+                    _count: "desc",
+                },
+            },
+            include: {
+                _count: {
+                    select: { post_likes: true },
+                },
+                post_likes: userId
+                    ? {
+                          where: { user_id: userId },
+                          select: { user_id: true },
+                      }
+                    : false,
+                post_difficulties: { omit: { post_difficulty_id: true } },
+                users: {
+                    select: {
+                        display_name: true,
+                        avatar_url: true,
+                    },
+                },
+                posts_tags: {
+                    select: {
+                        tags: { select: { tag: true } },
+                    },
+                },
+            },
+            omit: { user_id: true, post_difficulty_id: true },
+            take: limit,
+        });
+
+        return posts.map(({ _count, post_likes, posts_tags, ...post }) => ({
+            ...post,
+            likes: _count.post_likes,
+            isLiked: Boolean(post_likes?.length),
+            tags: posts_tags.map(pt => pt.tags.tag),
+        }));
+    }
+
     async getPostById(postId: string, userId?: string) {
         const posts = await this.prismaService.posts.findFirst({
             where: {

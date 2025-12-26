@@ -55,7 +55,7 @@ export class PostsService {
                 })),
             },
             orderBy: {
-                created_at: "desc"
+                created_at: "desc",
             },
             include: {
                 _count: {
@@ -243,6 +243,12 @@ export class PostsService {
     }
 
     async updatePostData(postId: string, file: Express.Multer.File) {
+        const existingPost = await this.prismaService.posts.findUnique({
+            where: { post_id: postId },
+        });
+
+        if (!existingPost) throw new NotFoundException("Post with such id not found");
+
         const postFolder = "posts";
         const dataUrl = await this.s3StorageService.uploadFile(file, postFolder);
 
@@ -323,6 +329,12 @@ export class PostsService {
     }
 
     async likePost(postId: string, userId: string) {
+        const existingPost = await this.prismaService.posts.findUnique({
+            where: { post_id: postId },
+        });
+
+        if (!existingPost) throw new NotFoundException("Post with such id not found");
+
         const isAlreadyLiked = await this.prismaService.post_likes.findUnique({
             where: {
                 post_id_user_id: {
@@ -372,6 +384,12 @@ export class PostsService {
     }
 
     async dislikePost(postId: string, userId: string) {
+        const existingPost = await this.prismaService.posts.findUnique({
+            where: { post_id: postId },
+        });
+
+        if (!existingPost) throw new NotFoundException("Post with such id not found");
+
         const isAlreadyDisliked = await this.prismaService.post_likes.findUnique({
             where: {
                 post_id_user_id: {

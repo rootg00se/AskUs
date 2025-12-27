@@ -5,6 +5,8 @@ import { CreatePostDto } from "./dto/create-post.dto";
 import { S3StorageService } from "@/libs/s3-storage/s3-storage.service";
 import { UpdatePostDto } from "./dto/update-post.dto";
 import { ConfigService } from "@nestjs/config";
+import { POSTS_INCLUDE, POSTS_OMIT } from "./utils/posts.constants";
+import { IPost } from "./types/post.type";
 
 @Injectable()
 export class PostsService {
@@ -60,42 +62,11 @@ export class PostsService {
                     },
                 })),
             },
-            orderBy: {
-                created_at: "desc",
-            },
-            include: {
-                _count: {
-                    select: { post_likes: true },
-                },
-                post_likes: userId
-                    ? {
-                          where: { user_id: userId },
-                          select: { user_id: true },
-                      }
-                    : false,
-                post_difficulties: { omit: { post_difficulty_id: true } },
-                users: {
-                    select: {
-                        display_name: true,
-                        avatar_url: true,
-                    },
-                },
-                posts_tags: {
-                    select: {
-                        tags: { select: { tag: true } },
-                    },
-                },
-            },
-            omit: { user_id: true, post_difficulty_id: true },
+            orderBy: { created_at: "desc" },
+            ...this.postsSelect(userId),
         });
 
-        return posts.map(({ _count, post_likes, posts_tags, ...post }) => ({
-            ...post,
-            likes: _count.post_likes,
-            data_url: `${this.BUCKET_URL}/${post.data_key}`,
-            isLiked: Boolean(post_likes.length),
-            tags: posts_tags.map(pt => pt.tags.tag),
-        }));
+        return posts.map(post => this.transformPostData(post));
     }
 
     async getPopularPosts(limit: number = 5, userId?: string) {
@@ -105,40 +76,11 @@ export class PostsService {
                     _count: "desc",
                 },
             },
-            include: {
-                _count: {
-                    select: { post_likes: true },
-                },
-                post_likes: userId
-                    ? {
-                          where: { user_id: userId },
-                          select: { user_id: true },
-                      }
-                    : false,
-                post_difficulties: { omit: { post_difficulty_id: true } },
-                users: {
-                    select: {
-                        display_name: true,
-                        avatar_url: true,
-                    },
-                },
-                posts_tags: {
-                    select: {
-                        tags: { select: { tag: true } },
-                    },
-                },
-            },
-            omit: { user_id: true, post_difficulty_id: true },
+            ...this.postsSelect(userId),
             take: limit,
         });
 
-        return posts.map(({ _count, post_likes, posts_tags, ...post }) => ({
-            ...post,
-            data_url: `${this.BUCKET_URL}/${post.data_key}`,
-            likes: _count.post_likes,
-            isLiked: Boolean(post_likes?.length),
-            tags: posts_tags.map(pt => pt.tags.tag),
-        }));
+        return posts.map(post => this.transformPostData(post));
     }
 
     async getPostById(postId: string, userId?: string) {
@@ -146,43 +88,12 @@ export class PostsService {
             where: {
                 post_id: postId,
             },
-            include: {
-                _count: {
-                    select: { post_likes: true },
-                },
-                post_likes: userId
-                    ? {
-                          where: { user_id: userId },
-                          select: { user_id: true },
-                      }
-                    : false,
-                post_difficulties: { omit: { post_difficulty_id: true } },
-                users: {
-                    select: {
-                        display_name: true,
-                        avatar_url: true,
-                    },
-                },
-                posts_tags: {
-                    select: {
-                        tags: { select: { tag: true } },
-                    },
-                },
-            },
-            omit: { user_id: true, post_difficulty_id: true },
+            ...this.postsSelect(userId),
         });
 
         if (!posts) throw new NotFoundException("Post with that id was not found");
 
-        const { _count, post_likes, posts_tags, ...post } = posts;
-
-        return {
-            ...post,
-            likes: _count.post_likes,
-            data_url: `${this.BUCKET_URL}/${post.data_key}`,
-            isLiked: Boolean(post_likes.length),
-            tags: posts_tags.map(pt => pt.tags.tag),
-        };
+        return this.transformPostData(posts);
     }
 
     async createPost(file: Express.Multer.File, userId: string, createPostDto: CreatePostDto) {
@@ -224,84 +135,27 @@ export class PostsService {
                     },
                 },
             },
-            include: {
-                _count: {
-                    select: { post_likes: true },
-                },
-                post_difficulties: { omit: { post_difficulty_id: true } },
-                users: {
-                    select: {
-                        display_name: true,
-                        avatar_url: true,
-                    },
-                },
-                posts_tags: {
-                    select: {
-                        tags: { select: { tag: true } },
-                    },
-                },
-            },
-            omit: { user_id: true, post_difficulty_id: true },
+            ...this.postsSelect(),
         });
 
-        const { _count, posts_tags, ...post } = createdPost;
-
-        return {
-            ...post,
-            data_url: `${this.BUCKET_URL}/${fileData.fileKey}`,
-            likes: _count.post_likes,
-            tags: posts_tags.map(pt => pt.tags.tag),
-        };
+        return this.transformPostData(createdPost);
     }
 
     async deletePost(postId: string) {
-        const existingPost = await this.prismaService.posts.findUnique({
-            where: { post_id: postId },
-        });
-
-        if (!existingPost) throw new NotFoundException("Post with that id was not found");
+        const existingPost = await this.checkIfPostExists(postId);
 
         const deletedPost = await this.prismaService.posts.delete({
             where: {
-                post_id: postId,
+                post_id: existingPost.post_id,
             },
-            include: {
-                _count: {
-                    select: { post_likes: true },
-                },
-                post_difficulties: { omit: { post_difficulty_id: true } },
-                users: {
-                    select: {
-                        display_name: true,
-                        avatar_url: true,
-                    },
-                },
-                posts_tags: {
-                    select: {
-                        tags: { select: { tag: true } },
-                    },
-                },
-            },
-            omit: { user_id: true, post_difficulty_id: true },
+            ...this.postsSelect(),
         });
 
-        const { _count, posts_tags, ...post } = deletedPost;
-
-        return {
-            ...post,
-            data_url: `${this.BUCKET_URL}/${post.data_key}`,
-            likes: _count.post_likes,
-            tags: posts_tags.map(pt => pt.tags.tag),
-        };
+        return this.transformPostData(deletedPost);
     }
 
     async updatePostData(postId: string, file: Express.Multer.File) {
-        const existingPost = await this.prismaService.posts.findUnique({
-            where: { post_id: postId },
-        });
-
-        if (!existingPost) throw new NotFoundException("Post with such id not found");
-
+        const existingPost = await this.checkIfPostExists(postId);
         const postFolder = "posts";
 
         const fileData = await this.s3StorageService.uploadFile(
@@ -313,89 +167,33 @@ export class PostsService {
         const createdPost = await this.prismaService.posts.update({
             where: { post_id: postId },
             data: { data_key: fileData.fileKey },
-            include: {
-                _count: {
-                    select: { post_likes: true },
-                },
-                post_difficulties: { omit: { post_difficulty_id: true } },
-                users: {
-                    select: {
-                        display_name: true,
-                        avatar_url: true,
-                    },
-                },
-                posts_tags: {
-                    select: {
-                        tags: { select: { tag: true } },
-                    },
-                },
-            },
-            omit: { user_id: true, post_difficulty_id: true },
+            ...this.postsSelect(),
         });
 
-        const { _count, posts_tags, ...post } = createdPost;
-
-        return {
-            ...post,
-            likes: _count.post_likes,
-            data_url: `${this.BUCKET_URL}/${fileData.fileKey}`,
-            tags: posts_tags.map(pt => pt.tags.tag),
-        };
+        return this.transformPostData(createdPost);
     }
 
     async updatePost(postId: string, updatePostDto: UpdatePostDto) {
-        const existingPost = await this.prismaService.posts.findUnique({
-            where: { post_id: postId },
-        });
-
-        if (!existingPost) throw new NotFoundException("Post with that id was not found");
+        const existingPost = await this.checkIfPostExists(postId);
 
         const updatedPost = await this.prismaService.posts.update({
             where: {
-                post_id: postId,
+                post_id: existingPost.post_id,
             },
             data: {
                 title: updatePostDto.title,
                 description: updatePostDto.description,
             },
-            include: {
-                _count: {
-                    select: { post_likes: true },
-                },
-                post_difficulties: { omit: { post_difficulty_id: true } },
-                users: {
-                    select: {
-                        display_name: true,
-                        avatar_url: true,
-                    },
-                },
-                posts_tags: {
-                    select: {
-                        tags: { select: { tag: true } },
-                    },
-                },
-            },
-            omit: { user_id: true, post_difficulty_id: true },
+            ...this.postsSelect(),
         });
 
-        const { _count, posts_tags, ...post } = updatedPost;
-
-        return {
-            ...post,
-            data_url: `${this.BUCKET_URL}/${post.data_key}`,
-            likes: _count.post_likes,
-            tags: posts_tags.map(pt => pt.tags.tag),
-        };
+        return this.transformPostData(updatedPost);
     }
 
-    async likePost(postId: string, userId: string) {
-        const existingPost = await this.prismaService.posts.findUnique({
-            where: { post_id: postId },
-        });
+    async toggleLike(postId: string, userId: string, like: boolean) {
+        await this.checkIfPostExists(postId);
 
-        if (!existingPost) throw new NotFoundException("Post with such id not found");
-
-        const isAlreadyLiked = await this.prismaService.post_likes.findUnique({
+        const exists = await this.prismaService.post_likes.findUnique({
             where: {
                 post_id_user_id: {
                     user_id: userId,
@@ -404,104 +202,65 @@ export class PostsService {
             },
         });
 
-        if (isAlreadyLiked) throw new BadRequestException("Post already liked by this user");
+        if (!exists && !like) throw new BadRequestException("User didn't like this post");
+        if (exists && like) throw new BadRequestException("User has already liked this post");
 
         const updatedPost = await this.prismaService.posts.update({
             where: { post_id: postId },
             data: {
-                post_likes: {
-                    create: { user_id: userId },
-                },
+                post_likes: like
+                    ? { create: { user_id: userId } }
+                    : {
+                          delete: {
+                              post_id_user_id: {
+                                  post_id: postId,
+                                  user_id: userId,
+                              },
+                          },
+                      },
             },
-            include: {
-                _count: {
-                    select: { post_likes: true },
-                },
-                post_difficulties: { omit: { post_difficulty_id: true } },
-                users: {
-                    select: {
-                        display_name: true,
-                        avatar_url: true,
-                    },
-                },
-                posts_tags: {
-                    select: {
-                        tags: { select: { tag: true } },
-                    },
-                },
-            },
-            omit: { user_id: true, post_difficulty_id: true },
+            ...this.postsSelect(userId),
         });
 
-        const { _count, posts_tags, ...post } = updatedPost;
-
-        return {
-            ...post,
-            likes: _count.post_likes,
-            data_url: `${this.BUCKET_URL}/${post.data_key}`,
-            isLiked: true,
-            tags: posts_tags.map(pt => pt.tags.tag),
-        };
+        return this.transformPostData(updatedPost);
     }
 
-    async dislikePost(postId: string, userId: string) {
+    private async checkIfPostExists(postId: string) {
         const existingPost = await this.prismaService.posts.findUnique({
             where: { post_id: postId },
         });
 
         if (!existingPost) throw new NotFoundException("Post with such id not found");
 
-        const isAlreadyDisliked = await this.prismaService.post_likes.findUnique({
-            where: {
-                post_id_user_id: {
-                    user_id: userId,
-                    post_id: postId,
-                },
-            },
-        });
+        return existingPost;
+    }
 
-        if (!isAlreadyDisliked) throw new BadRequestException("User didn't like this post");
-
-        const updatedPost = await this.prismaService.posts.update({
-            where: { post_id: postId },
-            data: {
-                post_likes: {
-                    delete: {
-                        post_id_user_id: {
-                            post_id: postId,
-                            user_id: userId,
-                        },
-                    },
-                },
-            },
-            include: {
-                _count: {
-                    select: { post_likes: true },
-                },
-                post_difficulties: { omit: { post_difficulty_id: true } },
-                users: {
-                    select: {
-                        display_name: true,
-                        avatar_url: true,
-                    },
-                },
-                posts_tags: {
-                    select: {
-                        tags: { select: { tag: true } },
-                    },
-                },
-            },
-            omit: { user_id: true, post_difficulty_id: true },
-        });
-
-        const { _count, posts_tags, ...post } = updatedPost;
+    private transformPostData(post: IPost) {
+        const { _count, post_likes, posts_tags, ...postData } = post;
 
         return {
-            ...post,
+            ...postData,
             likes: _count.post_likes,
             data_url: `${this.BUCKET_URL}/${post.data_key}`,
-            isLiked: false,
+            ...(post_likes && {
+                isLiked: Boolean(post_likes.length),
+            }),
             tags: posts_tags.map(pt => pt.tags.tag),
+        };
+    }
+
+    private postsSelect(userId?: string) {
+        return {
+            include: {
+                ...POSTS_INCLUDE,
+                post_likes: userId
+                    ? {
+                          where: { user_id: userId },
+                          select: { user_id: true },
+                      }
+                    : false,
+            },
+            ...POSTS_OMIT,
         };
     }
 }

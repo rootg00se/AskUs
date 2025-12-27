@@ -124,7 +124,7 @@ export class PostsController {
     @Post(":id/like")
     @UseGuards(AuthenticatedGuard)
     async likePost(@Param("id") postId: string, @Authorized("user_id") userId: string) {
-        return await this.postsService.likePost(postId, userId);
+        return await this.postsService.toggleLike(postId, userId, true);
     }
 
     @Delete(":id")
@@ -136,6 +136,6 @@ export class PostsController {
     @Delete(":id/like")
     @UseGuards(AuthenticatedGuard)
     async dislikePost(@Param("id") postId: string, @Authorized("user_id") userId: string) {
-        return await this.postsService.dislikePost(postId, userId);
+        return await this.postsService.toggleLike(postId, userId, false);
     }
 }

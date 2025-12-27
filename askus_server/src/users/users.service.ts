@@ -1,5 +1,5 @@
 import { PrismaService } from "@/prisma/prisma.service";
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { auth_method, Prisma } from "@prisma/generated";
 import { CreateUser } from "./types/create-user.type";
 import { OAuthUserDetails } from "@/libs/common/types/oauth-user-details.type";
@@ -67,6 +67,7 @@ export class UsersService {
                 email: oauthUserDetails.email,
                 display_name: oauthUserDetails.displayName,
                 method: auth_method.oauth,
+                avatar_url: oauthUserDetails.avatarUrl,
                 is_verified: true,
                 user_ranks: {
                     create: {
@@ -103,8 +104,10 @@ export class UsersService {
     }
 
     async getUserPosts(userId: string) {
+        const existingUser = await this.checkIfUserExists(userId);
+
         const userPosts = await this.prismaService.posts.findMany({
-            where: { user_id: userId },
+            where: { user_id: existingUser.user_id },
             include: {
                 post_difficulties: true,
                 _count: {
@@ -129,8 +132,10 @@ export class UsersService {
     }
 
     async getUserAnswers(userId: string) {
+        const existingUser = await this.checkIfUserExists(userId);
+
         const userAnswers = await this.prismaService.answers.findMany({
-            where: { user_id: userId },
+            where: { user_id: existingUser.user_id },
             omit: { user_id: true, parent_id: true },
         });
 
@@ -138,8 +143,10 @@ export class UsersService {
     }
 
     async updateUserNickname(userId: string, nickname: string) {
+        const existingUser = await this.checkIfUserExists(userId);
+
         const updatedUser = await this.prismaService.users.update({
-            where: { user_id: userId },
+            where: { user_id: existingUser.user_id },
             data: { display_name: nickname },
             include: {
                 ...USER_RANK_INCLUDE,
@@ -151,8 +158,10 @@ export class UsersService {
     }
 
     async enableUser2FA(userId: string, phone: string) {
+        const existingUser = await this.checkIfUserExists(userId);
+
         const updatedUser = await this.prismaService.users.update({
-            where: { user_id: userId },
+            where: { user_id: existingUser.user_id },
             data: {
                 phone,
                 is_two_factor_enabled: true,
@@ -167,8 +176,10 @@ export class UsersService {
     }
 
     async disableUser2FA(userId: string) {
+        const existingUser = await this.checkIfUserExists(userId);
+
         const updatedUser = await this.prismaService.users.update({
-            where: { user_id: userId },
+            where: { user_id: existingUser.user_id },
             data: {
                 phone: null,
                 is_two_factor_enabled: false,
@@ -183,12 +194,18 @@ export class UsersService {
     }
 
     async updateUserAvatar(userId: string, file: Express.Multer.File) {
+        const existingUser = await this.checkIfUserExists(userId);
         const avatarFolder = "avatars";
-        const avatarUrl = await this.s3StorageService.uploadFile(file, avatarFolder);
+
+        const fileData = await this.s3StorageService.uploadFile(
+            file,
+            avatarFolder,
+            existingUser.avatar_key,
+        );
 
         const updatedUser = await this.prismaService.users.update({
             where: { user_id: userId },
-            data: { avatar_url: avatarUrl },
+            data: { avatar_url: fileData.fileUrl, avatar_key: fileData.fileKey },
             include: {
                 ...USER_RANK_INCLUDE,
             },
@@ -196,5 +213,15 @@ export class UsersService {
         });
 
         return updatedUser;
+    }
+
+    private async checkIfUserExists(userId: string) {
+        const existingUser = await this.prismaService.users.findUnique({
+            where: { user_id: userId },
+        });
+
+        if (!existingUser) throw new NotFoundException("User with such id not found");
+
+        return existingUser;
     }
 }

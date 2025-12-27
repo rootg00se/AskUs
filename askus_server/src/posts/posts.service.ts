@@ -4,13 +4,19 @@ import { GetAllPostsDto } from "./dto/get-all-posts.dto";
 import { CreatePostDto } from "./dto/create-post.dto";
 import { S3StorageService } from "@/libs/s3-storage/s3-storage.service";
 import { UpdatePostDto } from "./dto/update-post.dto";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class PostsService {
+    private readonly BUCKET_URL: string;
+
     constructor(
         private readonly prismaService: PrismaService,
         private readonly s3StorageService: S3StorageService,
-    ) {}
+        private readonly configService: ConfigService,
+    ) {
+        this.BUCKET_URL = this.configService.getOrThrow<string>("S3_BUCKET_URL");
+    }
 
     async getAllPosts(getAllPostsDto: GetAllPostsDto, userId?: string) {
         const pageLimit = getAllPostsDto.pageLimit || 10;
@@ -86,6 +92,7 @@ export class PostsService {
         return posts.map(({ _count, post_likes, posts_tags, ...post }) => ({
             ...post,
             likes: _count.post_likes,
+            data_url: `${this.BUCKET_URL}/${post.data_key}`,
             isLiked: Boolean(post_likes.length),
             tags: posts_tags.map(pt => pt.tags.tag),
         }));
@@ -127,6 +134,7 @@ export class PostsService {
 
         return posts.map(({ _count, post_likes, posts_tags, ...post }) => ({
             ...post,
+            data_url: `${this.BUCKET_URL}/${post.data_key}`,
             likes: _count.post_likes,
             isLiked: Boolean(post_likes?.length),
             tags: posts_tags.map(pt => pt.tags.tag),
@@ -171,6 +179,7 @@ export class PostsService {
         return {
             ...post,
             likes: _count.post_likes,
+            data_url: `${this.BUCKET_URL}/${post.data_key}`,
             isLiked: Boolean(post_likes.length),
             tags: posts_tags.map(pt => pt.tags.tag),
         };
@@ -190,11 +199,11 @@ export class PostsService {
         }
 
         const postFolder = "posts";
-        const dataUrl = await this.s3StorageService.uploadFile(file, postFolder);
+        const fileData = await this.s3StorageService.uploadFile(file, postFolder);
 
         const createdPost = await this.prismaService.posts.create({
             data: {
-                data_url: dataUrl,
+                data_key: fileData.fileKey,
                 title: createPostDto.title,
                 description: createPostDto.description,
                 users: {
@@ -239,6 +248,7 @@ export class PostsService {
 
         return {
             ...post,
+            data_url: `${this.BUCKET_URL}/${fileData.fileKey}`,
             likes: _count.post_likes,
             tags: posts_tags.map(pt => pt.tags.tag),
         };
@@ -279,6 +289,7 @@ export class PostsService {
 
         return {
             ...post,
+            data_url: `${this.BUCKET_URL}/${post.data_key}`,
             likes: _count.post_likes,
             tags: posts_tags.map(pt => pt.tags.tag),
         };
@@ -292,11 +303,16 @@ export class PostsService {
         if (!existingPost) throw new NotFoundException("Post with such id not found");
 
         const postFolder = "posts";
-        const dataUrl = await this.s3StorageService.uploadFile(file, postFolder);
+
+        const fileData = await this.s3StorageService.uploadFile(
+            file,
+            postFolder,
+            existingPost.data_key,
+        );
 
         const createdPost = await this.prismaService.posts.update({
             where: { post_id: postId },
-            data: { data_url: dataUrl },
+            data: { data_key: fileData.fileKey },
             include: {
                 _count: {
                     select: { post_likes: true },
@@ -322,6 +338,7 @@ export class PostsService {
         return {
             ...post,
             likes: _count.post_likes,
+            data_url: `${this.BUCKET_URL}/${fileData.fileKey}`,
             tags: posts_tags.map(pt => pt.tags.tag),
         };
     }
@@ -365,6 +382,7 @@ export class PostsService {
 
         return {
             ...post,
+            data_url: `${this.BUCKET_URL}/${post.data_key}`,
             likes: _count.post_likes,
             tags: posts_tags.map(pt => pt.tags.tag),
         };
@@ -420,6 +438,7 @@ export class PostsService {
         return {
             ...post,
             likes: _count.post_likes,
+            data_url: `${this.BUCKET_URL}/${post.data_key}`,
             isLiked: true,
             tags: posts_tags.map(pt => pt.tags.tag),
         };
@@ -480,6 +499,7 @@ export class PostsService {
         return {
             ...post,
             likes: _count.post_likes,
+            data_url: `${this.BUCKET_URL}/${post.data_key}`,
             isLiked: false,
             tags: posts_tags.map(pt => pt.tags.tag),
         };

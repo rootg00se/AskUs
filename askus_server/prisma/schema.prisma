@@ -47,7 +47,7 @@ model post_difficulties {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model posts {
   post_id            String            @id(map: "pk_posts_post_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  data_url           String            @unique
+  data_key           String            @unique(map: "posts_data_url_key")
   title              String            @db.VarChar(64)
   description        String            @db.VarChar(255)
   is_closed          Boolean           @default(false)
@@ -119,6 +119,7 @@ model users {
   created_at            DateTime     @default(now()) @db.Timestamp(6)
   method                auth_method
   phone                 String?      @db.VarChar(20)
+  avatar_key            String?      @db.VarChar
   accounts              accounts[]
   answers               answers[]
   post_likes            post_likes[]

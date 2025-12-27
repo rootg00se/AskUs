@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { ConfigService } from "@nestjs/config";
 import { extname } from "path";
 import { randomBytes } from "crypto";
@@ -24,7 +24,9 @@ export class S3StorageService {
         this.S3_URL = configService.getOrThrow<string>("S3_BUCKET_URL");
     }
 
-    async uploadFile(file: Express.Multer.File, folder: string) {
+    async uploadFile(file: Express.Multer.File, folder: string, key?: string | null) {
+        if (key) await this.deleteFile(key);
+
         const extension = extname(file.originalname);
         const filename = `${folder}/${randomBytes(16).toString("hex") + extension}`;
 
@@ -37,6 +39,18 @@ export class S3StorageService {
 
         await this.CLIENT.send(command);
 
-        return `${this.S3_URL}/${filename}`;
+        return {
+            fileUrl: `${this.S3_URL}/${filename}`,
+            fileKey: filename,
+        };
+    }
+
+    async deleteFile(key: string) {
+        const command = new DeleteObjectCommand({
+            Bucket: this.BUCKET,
+            Key: key,
+        });
+
+        await this.CLIENT.send(command);
     }
 }

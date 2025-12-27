@@ -61,6 +61,7 @@ export class AuthService {
         const createdUser = await this.usersService.createOAuthUser({
             email: userDetails.email,
             displayName: userDetails.email,
+            avatarUrl: userDetails.avatarUrl
         });
 
         return createdUser;
@@ -69,7 +70,8 @@ export class AuthService {
     async validateOAuthUser(validateOAuthUserType: ValidateOAuthUserType) {
         const user = await this.findOrCreateOAuthUserByEmail({
             email: validateOAuthUserType.email, 
-            displayName: validateOAuthUserType.displayName
+            displayName: validateOAuthUserType.displayName,
+            avatarUrl: validateOAuthUserType.avatarUrl
         });
 
         await this.usersService.createUserAccount({

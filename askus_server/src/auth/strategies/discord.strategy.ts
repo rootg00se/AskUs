@@ -23,6 +23,7 @@ export class DiscordStrategy extends PassportStrategy(Strategy) {
         const user = await this.authService.validateOAuthUser({
             email: profile.email!,
             displayName: profile.displayName,
+            avatarUrl: profile.avatar,
             accessToken,
             refreshToken,
             profileId: profile.id,

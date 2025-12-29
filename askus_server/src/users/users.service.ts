@@ -123,13 +123,17 @@ export class UsersService {
                     },
                 },
                 users: { select: { display_name: true, avatar_url: true } },
+                closed_posts: {
+                    select: { post_id: true },
+                },
             },
             omit: { user_id: true, post_difficulty_id: true },
         });
 
-        return userPosts.map(({ _count, posts_tags, ...post }) => ({
+        return userPosts.map(({ _count, closed_posts, posts_tags, ...post }) => ({
             ...post,
             likes: _count.post_likes,
+            is_correct: closed_posts.length > 0,
             data_url: `${this.configService.getOrThrow<string>("S3_BUCKET_URL")}/${post.data_key}`,
             tags: posts_tags.map(pt => pt.tags.tag),
         }));

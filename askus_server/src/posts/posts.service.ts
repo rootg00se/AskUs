@@ -236,7 +236,7 @@ export class PostsService {
     }
 
     private transformPostData(post: IPost) {
-        const { _count, post_likes, posts_tags, ...postData } = post;
+        const { _count, post_likes, closed_posts, posts_tags, ...postData } = post;
 
         return {
             ...postData,
@@ -245,6 +245,7 @@ export class PostsService {
             ...(post_likes && {
                 isLiked: Boolean(post_likes.length),
             }),
+            is_correct: closed_posts.length > 0,
             tags: posts_tags.map(pt => pt.tags.tag),
         };
     }
@@ -258,7 +259,7 @@ export class PostsService {
                           where: { user_id: userId },
                           select: { user_id: true },
                       }
-                    : false,
+                    : false
             },
             ...POSTS_OMIT,
         };

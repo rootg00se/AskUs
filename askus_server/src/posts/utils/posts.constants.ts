@@ -1,7 +1,7 @@
 export const POSTS_OMIT = {
-    omit: { 
-        user_id: true, 
-        post_difficulty_id: true 
+    omit: {
+        user_id: true,
+        post_difficulty_id: true,
     },
 };
 
@@ -20,5 +20,8 @@ export const POSTS_INCLUDE = {
         select: {
             tags: { select: { tag: true } },
         },
+    },
+    closed_posts: {
+        select: { post_id: true },
     },
 };

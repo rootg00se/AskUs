@@ -3,7 +3,6 @@ export interface IPost {
     data_key: string;
     title: string;
     description: string;
-    is_closed: boolean;
     user_id: string;
     post_difficulty_id: string;
     created_at: Date;
@@ -29,4 +28,7 @@ export interface IPost {
     _count: {
         post_likes: number;
     };
+    closed_posts: {
+        post_id: string
+    }[]
 }

@@ -23,17 +23,17 @@ model accounts {
 }
 
 model answers {
-  answer_id     String    @id(map: "pk_answers_answer_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  post_id       String    @db.Uuid
+  answer_id     String         @id(map: "pk_answers_answer_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  post_id       String         @db.Uuid
   text          String
-  user_id       String    @db.Uuid
-  is_correct    Boolean?  @default(false)
-  parent_id     String?   @db.Uuid
-  created_at    DateTime? @default(now()) @db.Timestamp(6)
-  answers       answers?  @relation("answersToanswers", fields: [parent_id], references: [answer_id], onUpdate: NoAction, map: "fk_answers_parents")
-  other_answers answers[] @relation("answersToanswers")
-  posts         posts     @relation(fields: [post_id], references: [post_id], onDelete: Cascade, map: "fk_answers_posts")
-  users         users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "fk_answers_users")
+  user_id       String         @db.Uuid
+  parent_id     String?        @db.Uuid
+  created_at    DateTime?      @default(now()) @db.Timestamp(6)
+  answers       answers?       @relation("answersToanswers", fields: [parent_id], references: [answer_id], onUpdate: NoAction, map: "fk_answers_parents")
+  other_answers answers[]      @relation("answersToanswers")
+  posts         posts          @relation(fields: [post_id], references: [post_id], onDelete: Cascade, map: "fk_answers_posts")
+  users         users          @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "fk_answers_users")
+  closed_posts  closed_posts[]
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -50,12 +50,12 @@ model posts {
   data_key           String            @unique(map: "posts_data_url_key")
   title              String            @db.VarChar(64)
   description        String            @db.VarChar(255)
-  is_closed          Boolean           @default(false)
   user_id            String            @db.Uuid
   post_difficulty_id String            @db.Uuid
   created_at         DateTime          @default(now()) @db.Timestamp(6)
   updated_at         DateTime          @default(now()) @db.Timestamp(6)
   answers            answers[]
+  closed_posts       closed_posts[]
   post_likes         post_likes[]
   post_difficulties  post_difficulties @relation(fields: [post_difficulty_id], references: [post_difficulty_id], onDelete: Cascade, map: "fk_posts_post_difficulties")
   users              users             @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "fk_posts_users")
@@ -137,6 +137,18 @@ model post_likes {
   users   users  @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "fk_post_likes_users")
 
   @@id([post_id, user_id], map: "pk_post_likes_post_like_id")
+}
+
+model closed_posts {
+  post_id    String   @db.Uuid
+  answer_id  String   @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  answers    answers  @relation(fields: [answer_id], references: [answer_id], onDelete: Cascade, map: "fk_closed_posts_answer_id")
+  posts      posts    @relation(fields: [post_id], references: [post_id], onDelete: Cascade, map: "fk_closed_posts_post_id")
+
+  @@id([post_id, answer_id], map: "pk_closed_posts_closed_post_id")
+  @@index([answer_id], map: "idx_closed_posts_answer_id")
+  @@index([post_id], map: "idx_closed_posts_post_id")
 }
 
 enum auth_method {

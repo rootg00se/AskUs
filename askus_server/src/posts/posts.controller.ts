@@ -27,12 +27,24 @@ import { validate } from "class-validator";
 import { UpdatePostDto } from "./dto/update-post.dto";
 import { GetPopularPostsDto } from "./dto/get-popular-posts.dto";
 import { CacheInterceptor, CacheKey } from "@nestjs/cache-manager";
+import { ApiBody, ApiConsumes, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import {
+    PostResponse,
+    PostResponseWithLike,
+    PostsArrayWithLikeResponse,
+} from "@/shared/docs-responses/post.response";
+import { UpdateAvatarDto } from "@/users/dto/update-avatar.dto";
 
 @Controller("posts")
 export class PostsController {
     constructor(private readonly postsService: PostsService) {}
 
     @Get()
+    @ApiOperation({
+        summary: "All posts",
+        description: "Returns full information about the posts",
+    })
+    @ApiOkResponse({ description: "Posts returned", type: PostsArrayWithLikeResponse })
     async getAllPosts(
         @Query() getAllPostsDto: GetAllPostsDto,
         @Authorized("user_id") userId: string,
@@ -41,6 +53,11 @@ export class PostsController {
     }
 
     @Get("popular")
+    @ApiOperation({
+        summary: "Get all popular posts",
+        description: "Returns full information about the popular posts",
+    })
+    @ApiOkResponse({ description: "Posts returned", type: PostsArrayWithLikeResponse })
     @UseInterceptors(CacheInterceptor)
     @CacheKey("posts:popular")
     async getPopularPosts(
@@ -51,11 +68,23 @@ export class PostsController {
     }
 
     @Get(":id")
+    @ApiOperation({
+        summary: "Get post by id",
+        description: "Returns full information about the post",
+    })
+    @ApiOkResponse({ description: "Post returned", type: PostResponseWithLike })
     async getPostById(@Param("id") id: string, @Authorized("user_id") userId: string) {
         return await this.postsService.getPostById(id, userId);
     }
 
     @Post()
+    @ApiOperation({
+        summary: "Create post",
+        description: "Creates new post and returns it",
+    })
+    @ApiOkResponse({ description: "Post created", type: PostResponse })
+    @ApiConsumes("multipart/form-data")
+    @ApiBody({ type: CreatePostDto })
     @UseGuards(AuthenticatedGuard)
     @UseInterceptors(FileInterceptor("post"))
     async createPost(
@@ -74,7 +103,6 @@ export class PostsController {
         @Body("data") data: string,
     ) {
         let createPostDto: CreatePostDto = plainToInstance(CreatePostDto, JSON.parse(data));
-
         const errors = await validate(createPostDto);
 
         if (errors.length > 0) {
@@ -93,6 +121,13 @@ export class PostsController {
     }
 
     @Patch(":id/data")
+    @ApiOperation({
+        summary: "Update post data",
+        description: "Updates post data md file",
+    })
+    @ApiOkResponse({ description: "Post updated", type: PostResponse })
+    @ApiConsumes("multipart/form-data")
+    @ApiBody({ type: UpdateAvatarDto })
     @UseInterceptors(FileInterceptor("post"))
     @UseGuards(AuthenticatedGuard)
     async updatePostData(
@@ -116,24 +151,44 @@ export class PostsController {
     }
 
     @Put(":id")
+    @ApiOperation({
+        summary: "Update post information",
+        description: "Updates post title and description",
+    })
+    @ApiOkResponse({ description: "Post updated", type: PostResponse })
     @UseGuards(AuthenticatedGuard)
     async updatePostInformation(@Body() updatePostDto: UpdatePostDto, @Param("id") postId: string) {
         return await this.postsService.updatePost(postId, updatePostDto);
     }
 
     @Post(":id/like")
+    @ApiOperation({
+        summary: "Like post",
+        description: "Increase post like count",
+    })
+    @ApiOkResponse({ description: "Post liked", type: PostResponseWithLike })
     @UseGuards(AuthenticatedGuard)
     async likePost(@Param("id") postId: string, @Authorized("user_id") userId: string) {
         return await this.postsService.toggleLike(postId, userId, true);
     }
 
     @Delete(":id")
+    @ApiOperation({
+        summary: "Delete Post",
+        description: "Completly delete post with all data files",
+    })
+    @ApiOkResponse({ description: "Post deleted", type: PostResponse })
     @UseGuards(AuthenticatedGuard)
     async deletePost(@Param("id") postId: string) {
         return await this.postsService.deletePost(postId);
     }
 
     @Delete(":id/like")
+    @ApiOperation({
+        summary: "Dislike post",
+        description: "Decrease post like count",
+    })
+    @ApiOkResponse({ description: "Post disliked", type: PostResponseWithLike })
     @UseGuards(AuthenticatedGuard)
     async dislikePost(@Param("id") postId: string, @Authorized("user_id") userId: string) {
         return await this.postsService.toggleLike(postId, userId, false);

@@ -1,6 +1,7 @@
 import { ResponseDto } from "@/shared/dto/response.dto";
 import { ApiProperty } from "@nestjs/swagger";
 import { PostDifficultyDto } from "../dto/post-difficulty.dto";
+import { PostUserInfoDto } from "../dto/post-user-info.dto";
 
 class PostResponseDto {
     @ApiProperty({
@@ -9,6 +10,13 @@ class PostResponseDto {
         type: String,
     })
     post_id: string;
+
+    @ApiProperty({
+        description: "Key to the post data file",
+        example: "posts/test.md",
+        type: String,
+    })
+    data_key: string;
 
     @ApiProperty({
         description: "Url to the data of a post",
@@ -68,6 +76,23 @@ class PostResponseDto {
 
     @ApiProperty({ type: PostDifficultyDto })
     post_difficulties: PostDifficultyDto;
+
+    @ApiProperty({ type: PostUserInfoDto })
+    users: PostDifficultyDto;
+}
+
+class PostResponseWithLikeDto extends PostResponseDto {
+    @ApiProperty({
+        description: "Flag that shows if user liked this post",
+        example: true,
+        type: Boolean,
+    })
+    isLiked: boolean;
+}
+
+export class PostResponseWithLike extends ResponseDto {
+    @ApiProperty({ type: PostResponseWithLikeDto })
+    data: PostResponseWithLikeDto;
 }
 
 export class PostResponse extends ResponseDto {
@@ -78,4 +103,9 @@ export class PostResponse extends ResponseDto {
 export class PostsArrayResponse extends ResponseDto {
     @ApiProperty({ type: [PostResponseDto] })
     data: PostResponseDto[];
+}
+
+export class PostsArrayWithLikeResponse extends ResponseDto {
+    @ApiProperty({ type: [PostResponseWithLikeDto] })
+    data: PostResponseWithLikeDto[];
 }

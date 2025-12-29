@@ -6,12 +6,14 @@ import { OAuthUserDetails } from "@/libs/common/types/oauth-user-details.type";
 import { CreateAccount } from "@/users/types/create-account.type";
 import { S3StorageService } from "@/libs/s3-storage/s3-storage.service";
 import { USER_RANK_INCLUDE } from "./utils/user.constants";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class UsersService {
     constructor(
         private readonly prismaService: PrismaService,
         private readonly s3StorageService: S3StorageService,
+        private readonly configService: ConfigService,
     ) {}
 
     async findByEmail(email: string) {
@@ -120,6 +122,7 @@ export class UsersService {
                         tags: { select: { tag: true } },
                     },
                 },
+                users: { select: { display_name: true, avatar_url: true } },
             },
             omit: { user_id: true, post_difficulty_id: true },
         });
@@ -127,6 +130,7 @@ export class UsersService {
         return userPosts.map(({ _count, posts_tags, ...post }) => ({
             ...post,
             likes: _count.post_likes,
+            data_url: `${this.configService.getOrThrow<string>("S3_BUCKET_URL")}/${post.data_key}`,
             tags: posts_tags.map(pt => pt.tags.tag),
         }));
     }

@@ -7,6 +7,8 @@ import { CreateAccount } from "@/users/types/create-account.type";
 import { S3StorageService } from "@/libs/s3-storage/s3-storage.service";
 import { USER_RANK_INCLUDE } from "./utils/user.constants";
 import { ConfigService } from "@nestjs/config";
+import { ANSWERS_INCLUDE, ANSWERS_OMIT } from "@/answers/utils/answers.constants";
+import { POSTS_INCLUDE, POSTS_OMIT } from "@/posts/utils/posts.constants";
 
 @Injectable()
 export class UsersService {
@@ -110,24 +112,8 @@ export class UsersService {
 
         const userPosts = await this.prismaService.posts.findMany({
             where: { user_id: existingUser.user_id },
-            include: {
-                post_difficulties: true,
-                _count: {
-                    select: {
-                        post_likes: true,
-                    },
-                },
-                posts_tags: {
-                    select: {
-                        tags: { select: { tag: true } },
-                    },
-                },
-                users: { select: { display_name: true, avatar_url: true } },
-                closed_posts: {
-                    select: { post_id: true },
-                },
-            },
-            omit: { user_id: true, post_difficulty_id: true },
+            include: { ...POSTS_INCLUDE },
+            ...POSTS_OMIT
         });
 
         return userPosts.map(({ _count, closed_posts, posts_tags, ...post }) => ({
@@ -144,10 +130,15 @@ export class UsersService {
 
         const userAnswers = await this.prismaService.answers.findMany({
             where: { user_id: existingUser.user_id },
-            omit: { user_id: true, parent_id: true },
+            include: { ...ANSWERS_INCLUDE },
+            ...ANSWERS_OMIT
         });
 
-        return userAnswers;
+        return userAnswers.map(({ closed_posts, _count, ...answer }) => ({
+            ...answer,
+            has_replies: _count.other_answers > 0,
+            is_correct: closed_posts.length > 0,
+        }));
     }
 
     async updateUserNickname(userId: string, nickname: string) {

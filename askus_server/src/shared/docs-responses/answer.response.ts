@@ -1,5 +1,6 @@
 import { ResponseDto } from "@/shared/dto/response.dto";
 import { ApiProperty } from "@nestjs/swagger";
+import { AnswerUserDto } from "../dto/answer-user.dto";
 
 class AnswerResponseDto {
     @ApiProperty({
@@ -36,6 +37,16 @@ class AnswerResponseDto {
         type: Date,
     })
     create_at: Date;
+
+    @ApiProperty({
+        description: "Flag that tells if answer has replies",
+        example: true,
+        type: Boolean,
+    })
+    has_replies: Boolean;
+
+    @ApiProperty({ type: AnswerUserDto })
+    users: AnswerUserDto;
 }
 
 export class AnswerResponse extends ResponseDto {

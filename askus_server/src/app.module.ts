@@ -9,6 +9,7 @@ import { S3StorageModule } from "./libs/s3-storage/s3-storage.module";
 import { PostsModule } from "./posts/posts.module";
 import { CacheModule } from "@nestjs/cache-manager";
 import { keyvRedisConfig } from "./config/keyv-redis.config";
+import { AnswersModule } from './answers/answers.module';
 
 @Module({
     imports: [
@@ -28,6 +29,7 @@ import { keyvRedisConfig } from "./config/keyv-redis.config";
             useFactory: keyvRedisConfig,
             inject: [ConfigService],
         }),
+        AnswersModule,
     ],
 })
 export class AppModule {}

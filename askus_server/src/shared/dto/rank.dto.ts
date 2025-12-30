@@ -14,4 +14,11 @@ export class RankDto {
         type: String,
     })
     badge_url: string;
+
+    @ApiProperty({
+        description: "Points required for the current rank",
+        example: 100,
+        type: Number,
+    })
+    required_points: number;
 }

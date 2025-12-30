@@ -7,6 +7,7 @@ export const USER_RANK_INCLUDE = {
                 select: {
                     name: true,
                     badge_url: true,
+                    required_points: true
                 },
             },
         },

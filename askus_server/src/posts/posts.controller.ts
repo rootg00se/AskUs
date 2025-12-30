@@ -34,10 +34,16 @@ import {
     PostsArrayWithLikeResponse,
 } from "@/shared/docs-responses/post.response";
 import { UpdateAvatarDto } from "@/users/dto/update-avatar.dto";
+import { GetAllAnswersDto } from "@/answers/dto/get-all-answers.dto";
+import { AnswersService } from "@/answers/answers.service";
+import { CreateAnswerDto } from "@/answers/dto/create-answer.dto";
 
 @Controller("posts")
 export class PostsController {
-    constructor(private readonly postsService: PostsService) {}
+    constructor(
+        private readonly postsService: PostsService,
+        private readonly answersService: AnswersService,
+    ) {}
 
     @Get()
     @ApiOperation({
@@ -192,5 +198,25 @@ export class PostsController {
     @UseGuards(AuthenticatedGuard)
     async dislikePost(@Param("id") postId: string, @Authorized("user_id") userId: string) {
         return await this.postsService.toggleLike(postId, userId, false);
+    }
+
+    @Get(":id/answers")
+    async getPostAnswers(@Param("id") postId: string, @Query() getAllAnswersDto: GetAllAnswersDto) {
+        return await this.answersService.getAllPostAnswer(postId, getAllAnswersDto);
+    }
+
+    @Post(":id/answers")
+    @UseGuards(AuthenticatedGuard)
+    async createAnswerForPost(
+        @Param("id") postId: string,
+        @Body() createAnswerDto: CreateAnswerDto,
+        @Authorized("user_id") userId: string,
+    ) {
+        return await this.answersService.createAnswer(
+            postId,
+            userId,
+            createAnswerDto,
+            createAnswerDto.answerId,
+        );
     }
 }

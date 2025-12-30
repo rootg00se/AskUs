@@ -10,6 +10,7 @@ import { PostsModule } from "./posts/posts.module";
 import { CacheModule } from "@nestjs/cache-manager";
 import { keyvRedisConfig } from "./config/keyv-redis.config";
 import { AnswersModule } from './answers/answers.module';
+import { RanksModule } from './ranks/ranks.module';
 
 @Module({
     imports: [
@@ -30,6 +31,7 @@ import { AnswersModule } from './answers/answers.module';
             inject: [ConfigService],
         }),
         AnswersModule,
+        RanksModule,
     ],
 })
 export class AppModule {}

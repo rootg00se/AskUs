@@ -4,6 +4,7 @@ import {
     FileTypeValidator,
     Get,
     MaxFileSizeValidator,
+    Param,
     ParseFilePipe,
     Patch,
     UploadedFile,
@@ -22,11 +23,15 @@ import { UserResponse } from "@/shared/docs-responses/user.response";
 import { PostsArrayResponse } from "@/shared/docs-responses/post.response";
 import { AnswersArrayResponse } from "@/shared/docs-responses/answer.response";
 import { UpdateAvatarDto } from "./dto/update-avatar.dto";
+import { RanksService } from "@/ranks/ranks.service";
 
 @Controller("users")
 @UseGuards(AuthenticatedGuard)
 export class UsersController {
-    constructor(private readonly usersService: UsersService) {}
+    constructor(
+        private readonly usersService: UsersService,
+        private readonly ranksService: RanksService,
+    ) {}
 
     @Get("info")
     @ApiOperation({
@@ -34,28 +39,34 @@ export class UsersController {
         description: "Returns full information about the user",
     })
     @ApiOkResponse({ description: "User returned", type: UserResponse })
+    @UseGuards(AuthenticatedGuard)
     getUserInfo(@Authorized() user: IUser) {
         return user;
     }
 
-    @Get("posts")
+    @Get(":id/posts")
     @ApiOperation({
         summary: "Getting user's posts",
         description: "Returns all the posts that belongs to the user",
     })
     @ApiOkResponse({ description: "User's posts returned", type: PostsArrayResponse })
-    async getUserPosts(@Authorized("user_id") userId: string) {
+    async getUserPosts(@Param("id") userId: string) {
         return await this.usersService.getUserPosts(userId);
     }
 
-    @Get("answers")
+    @Get(":id/answers")
     @ApiOperation({
         summary: "Getting user's answers",
         description: "Returns all the answers that belongs to the user",
     })
     @ApiOkResponse({ description: "User's answers returned", type: AnswersArrayResponse })
-    async getUserAnswers(@Authorized("user_id") userId: string) {
+    async getUserAnswers(@Param("id") userId: string) {
         return await this.usersService.getUserAnswers(userId);
+    }
+
+    @Get(":id/ranks")
+    async getUserRankFullInfo(@Param("id") userId: string) {
+        return await this.ranksService.getFullUserRankInformation(userId);
     }
 
     @Patch("nickname")
@@ -64,6 +75,7 @@ export class UsersController {
         description: "Changes user's nickname to a new one",
     })
     @ApiOkResponse({ description: "User's nickname changed", type: UserResponse })
+    @UseGuards(AuthenticatedGuard)
     async updateUserNickname(
         @Authorized("user_id") userId: string,
         @Body() updateNicknameDto: UpdateNicknameDto,
@@ -77,6 +89,7 @@ export class UsersController {
         description: "Sets user's phone number and enables 2fa",
     })
     @ApiOkResponse({ description: "2FA enabled", type: UserResponse })
+    @UseGuards(AuthenticatedGuard)
     async enableUser2FA(@Authorized("user_id") userId: string, @Body() enable2FADto: Enable2FADto) {
         return await this.usersService.enableUser2FA(userId, enable2FADto.phone);
     }
@@ -87,6 +100,7 @@ export class UsersController {
         description: "Sets user's phone number to null and disables 2fa",
     })
     @ApiOkResponse({ description: "2FA disabled", type: UserResponse })
+    @UseGuards(AuthenticatedGuard)
     async disableUser2FA(@Authorized("user_id") userId: string) {
         return await this.usersService.disableUser2FA(userId);
     }
@@ -100,6 +114,7 @@ export class UsersController {
     @ApiBody({ type: UpdateAvatarDto })
     @ApiOkResponse({ description: "Avatar updated", type: UserResponse })
     @UseInterceptors(FileInterceptor("avatar"))
+    @UseGuards(AuthenticatedGuard)
     async updateUserAvatar(
         @UploadedFile(
             new ParseFilePipe({

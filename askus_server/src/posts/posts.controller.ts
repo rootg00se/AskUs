@@ -37,6 +37,7 @@ import { UpdateAvatarDto } from "@/users/dto/update-avatar.dto";
 import { GetAllAnswersDto } from "@/answers/dto/get-all-answers.dto";
 import { AnswersService } from "@/answers/answers.service";
 import { CreateAnswerDto } from "@/answers/dto/create-answer.dto";
+import { AnswerResponse, AnswersArrayResponse } from "@/shared/docs-responses/answer.response";
 
 @Controller("posts")
 export class PostsController {
@@ -201,11 +202,21 @@ export class PostsController {
     }
 
     @Get(":id/answers")
+    @ApiOperation({
+        summary: "Get all answers",
+        description: "Returns all answers of the post",
+    })
+    @ApiOkResponse({ description: "Answers returned", type: AnswersArrayResponse })
     async getPostAnswers(@Param("id") postId: string, @Query() getAllAnswersDto: GetAllAnswersDto) {
         return await this.answersService.getAllPostAnswer(postId, getAllAnswersDto);
     }
 
     @Post(":id/answers")
+    @ApiOperation({
+        summary: "Create answer",
+        description: "Create's new answer and returns it",
+    })
+    @ApiOkResponse({ description: "Answer created", type: AnswerResponse })
     @UseGuards(AuthenticatedGuard)
     async createAnswerForPost(
         @Param("id") postId: string,

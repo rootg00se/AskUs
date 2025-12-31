@@ -24,6 +24,7 @@ import { PostsArrayResponse } from "@/shared/docs-responses/post.response";
 import { AnswersArrayResponse } from "@/shared/docs-responses/answer.response";
 import { UpdateAvatarDto } from "./dto/update-avatar.dto";
 import { RanksService } from "@/ranks/ranks.service";
+import { UserRanksResponse } from "@/shared/docs-responses/user-ranks.response";
 
 @Controller("users")
 @UseGuards(AuthenticatedGuard)
@@ -65,6 +66,11 @@ export class UsersController {
     }
 
     @Get(":id/ranks")
+    @ApiOperation({
+        summary: "Get rank information",
+        description: "Returns full information about user rank",
+    })
+    @ApiOkResponse({ description: "Rank information returned", type: UserRanksResponse })
     async getUserRankFullInfo(@Param("id") userId: string) {
         return await this.ranksService.getFullUserRankInformation(userId);
     }

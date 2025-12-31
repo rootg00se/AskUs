@@ -22,7 +22,7 @@ export class RanksService {
 
         const userRanks = await this.prismaService.user_ranks.findUnique({
             where: { user_id: existingUser.user_id },
-            include: { ranks: { omit: { rank_id: true } } },
+            include: { ranks: true },
             omit: { user_id: true, rank_id: true },
         });
 

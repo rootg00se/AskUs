@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { GetAllAnswersDto } from "./dto/get-all-answers.dto";
 import { CreateAnswerDto } from "./dto/create-answer.dto";
 import { ANSWERS_INCLUDE, ANSWERS_OMIT } from "./utils/answers.constants";
-import { IAnswer } from "./types/answer.type";
+import { IAnswer } from "../libs/common/types/answer.type";
 import { UpdateAnswerDto } from "./dto/update-answer.dto";
 
 @Injectable()

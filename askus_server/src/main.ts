@@ -10,7 +10,8 @@ import { createClient, RedisClientType } from "redis";
 import session from "express-session";
 import passport from "passport";
 import { sessionConfig } from "./config/session.config";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { SwaggerModule } from "@nestjs/swagger";
+import { swaggerConfig } from "./config/swagger.config";
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -21,15 +22,8 @@ async function bootstrap() {
 
     app.setGlobalPrefix("api/v1");
 
-    const swaggerConfig = new DocumentBuilder()
-        .setTitle("AskUs API")
-        .setDescription("API documentation for ask us web-app")
-        .setVersion("1.0.0")
-        .setContact("RootG00se", "http://localhost:5137", "gorc141408@gmail.com")
-        .addCookieAuth("session")
-        .build();
-
-    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    const swaggerOptions = swaggerConfig();
+    const document = SwaggerModule.createDocument(app, swaggerOptions);
 
     SwaggerModule.setup("api/docs", app, document, {
         jsonDocumentUrl: "/swagger.json",

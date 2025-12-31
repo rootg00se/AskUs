@@ -6,7 +6,7 @@ import { S3StorageService } from "@/libs/s3-storage/s3-storage.service";
 import { UpdatePostDto } from "./dto/update-post.dto";
 import { ConfigService } from "@nestjs/config";
 import { POSTS_INCLUDE, POSTS_OMIT } from "./utils/posts.constants";
-import { IPost } from "./types/post.type";
+import { IPost } from "../libs/common/types/post.type";
 
 @Injectable()
 export class PostsService {

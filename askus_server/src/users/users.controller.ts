@@ -45,6 +45,16 @@ export class UsersController {
         return user;
     }
 
+    @Get(":id")
+    @ApiOperation({
+        summary: "User's profile info by id",
+        description: "Returns full information about the user by it's id",
+    })
+    @ApiOkResponse({ description: "User returned", type: UserResponse })
+    async getUserProfile(@Param("id") userId: string) {
+        return await this.usersService.findById(userId);
+    }
+
     @Get(":id/posts")
     @ApiOperation({
         summary: "Getting user's posts",

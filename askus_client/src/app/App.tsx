@@ -1,10 +1,15 @@
-import { Button } from "@/shared/components/ui";
+import { HomePage } from "@/pages/home";
+import { NotFoundPage } from "@/pages/not-found";
 import type React from "react";
+import { Route, Routes } from "react-router-dom";
 
 const App: React.FC = () => {
     return (
         <div className="wrap">
-            <Button>Some button</Button>
+            <Routes>
+                <Route path="*" element={<NotFoundPage />} />
+                <Route path="/" element={<HomePage />} />
+            </Routes>
         </div>
     );
 };

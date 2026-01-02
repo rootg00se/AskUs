@@ -49,10 +49,10 @@
     --background: oklch(1 0 0);
     --foreground: oklch(0.141 0.005 285.823);
     --card: oklch(1 0 0);
-    --card-foreground: oklch(0.141 0.005 285.823);
+    --card-foreground: #09090b;
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.141 0.005 285.823);
-    --primary: oklch(0.586 0.253 17.585);
+    --primary: #ec003f;
     --primary-foreground: oklch(0.969 0.015 12.422);
     --secondary: oklch(0.967 0.001 286.375);
     --secondary-foreground: oklch(0.21 0.006 285.885);
@@ -123,7 +123,7 @@
 }
 
 ._container {
-    max-width: 1400px;
+    max-width: 1250px;
     margin: 0 auto;
     padding: 0px 15px;
 }
@@ -139,4 +139,8 @@
     flex-direction: column;
     min-height: 100%;
     overflow: hidden;
+}
+
+body {
+    background-color: #f1f1f1;
 }

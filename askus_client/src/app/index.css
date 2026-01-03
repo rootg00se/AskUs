@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@import url(https://fonts.googleapis.com/css?family=Roboto:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic);
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -129,7 +131,7 @@
 }
 
 .wrap {
-    overflow: hidden;
+    /* overflow: hidden; */
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -138,7 +140,7 @@
     -ms-flex-direction: column;
     flex-direction: column;
     min-height: 100%;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 body {

@@ -1,0 +1,1 @@
+export { TwoFactorAuthPage } from "./ui/two-factor-auth.ui"

@@ -1,0 +1,1 @@
+export { NewPasswordPage } from "./ui/new-password.ui";

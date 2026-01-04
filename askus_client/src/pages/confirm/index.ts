@@ -1,0 +1,1 @@
+export { ConfirmPage } from "./ui/confirm.ui";

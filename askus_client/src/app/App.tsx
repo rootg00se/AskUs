@@ -3,6 +3,8 @@ import { HomePage } from "@/pages/home";
 import { NewPasswordPage } from "@/pages/new-password";
 import { NotFoundPage } from "@/pages/not-found";
 import { PasswordResetPage } from "@/pages/password-rest";
+import { PostPage } from "@/pages/post";
+import { ProfilePage } from "@/pages/profile";
 import { SignInPage } from "@/pages/sign-in";
 import { SignUpPage } from "@/pages/sign-up";
 import { TwoFactorAuthPage } from "@/pages/two-factor-auth";
@@ -23,6 +25,8 @@ const App: React.FC = () => {
                 <Route path="/password-reset" element={<PasswordResetPage />} />
                 <Route path="/new-password" element={<NewPasswordPage />} />
                 <Route path="/2fa" element={<TwoFactorAuthPage />} />
+                <Route path="/profile/:id" element={<ProfilePage />} />
+                <Route path="/post/:id" element={<PostPage />} />
             </Routes>
         </div>
     );

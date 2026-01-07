@@ -423,7 +423,6 @@ export const HomePage: React.FC = () => {
                     </section>
                 </div>
             </main>
-            <footer></footer>
         </div>
     );
 };

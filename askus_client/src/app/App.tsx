@@ -1,4 +1,5 @@
 import { ConfirmPage } from "@/pages/confirm";
+import { CreatePostPage } from "@/pages/create-post";
 import { HomePage } from "@/pages/home";
 import { NewPasswordPage } from "@/pages/new-password";
 import { NotFoundPage } from "@/pages/not-found";
@@ -27,6 +28,7 @@ const App: React.FC = () => {
                 <Route path="/2fa" element={<TwoFactorAuthPage />} />
                 <Route path="/profile/:id" element={<ProfilePage />} />
                 <Route path="/post/:id" element={<PostPage />} />
+                <Route path="/post/create" element={<CreatePostPage />} />
             </Routes>
         </div>
     );

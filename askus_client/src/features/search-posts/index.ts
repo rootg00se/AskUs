@@ -1,0 +1,1 @@
+export { SearchPostsInput } from "./ui/search-posts-input.ui";

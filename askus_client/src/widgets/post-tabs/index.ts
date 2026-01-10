@@ -1,0 +1,1 @@
+export { PostTabs } from "./ui/post-tabs.ui";

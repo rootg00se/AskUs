@@ -1,8 +1,8 @@
 import React from "react";
 import logo from "@/shared/assets/images/logo.png";
-import { Button, InputGroup, InputGroupAddon, InputGroupInput } from "@/shared/components/ui";
-import { Search } from "lucide-react";
+import { Button } from "@/shared/components/ui";
 import { Link } from "react-router-dom";
+import { SearchPostsInput } from "@/features/search-posts";
 
 export const Header: React.FC = () => {
     return (
@@ -11,13 +11,7 @@ export const Header: React.FC = () => {
                 <div className="max-w-35">
                     <img src={logo} className="w-full" alt="" />
                 </div>
-                <InputGroup className="max-w-150">
-                    <InputGroupInput placeholder="Search..." />
-                    <InputGroupAddon>
-                        <Search />
-                    </InputGroupAddon>
-                    <InputGroupAddon align="inline-end">12 results</InputGroupAddon>
-                </InputGroup>
+                <SearchPostsInput />
                 <div className="flex items-center gap-2">
                     <Link to={""} className="underline">
                         Sign In

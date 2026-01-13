@@ -1,0 +1,8 @@
+import { API_URL } from "@/shared/config/constants";
+
+const AUTH_URL = `${API_URL}/auth`
+
+export const AUTH_ENDPOINTS = {
+    SIGN_UP: `${AUTH_URL}/register`,
+    SIGN_IN: `${AUTH_URL}/login`
+}

@@ -2,38 +2,14 @@ import { Button, Label } from "@/shared/components/ui";
 import { Input } from "@/shared/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
 import React from "react";
 import { toast } from "react-toastify";
-
-const signUpFormSchema = z
-    .object({
-        email: z
-            .string({ message: "Email must be a string" })
-            .email({ message: "Email is incorrect" })
-            .nonempty({ message: "Email is required" }),
-        nickname: z
-            .string({ message: "Nickname must be a string" })
-            .nonempty({ message: "Nickname can't be empty" })
-            .min(2, { message: "Nickname should be at least 2 symbols" })
-            .max(64, { message: "Nickname can't be longer than 64 symbols" }),
-        password: z
-            .string({ message: "Password must be a string" })
-            .nonempty({ message: "Password can't be empty" })
-            .min(8, { message: "Password should be at least 8 symbols" })
-            .max(16, { message: "Password can't be longer than 16 symbols" }),
-        repeatPassword: z
-            .string({ message: "Repeat password must be a string" })
-            .nonempty({ message: "Repeat password can't be empty" }),
-    })
-    .refine((data) => data.password === data.repeatPassword, {
-        message: "Passwords not matchin",
-        path: ["repeatPassword"],
-    });
-
-type SignUpFields = z.infer<typeof signUpFormSchema>;
+import { useSignUp } from "@/entities/auth";
+import { signUpFormSchema, type SignUpFields } from "../model/validation-schemas";
 
 export const SignUpForm: React.FC = () => {
+    const { singUpFunc, isSignUpPending } = useSignUp();
+
     const {
         register,
         formState: { errors },
@@ -43,11 +19,8 @@ export const SignUpForm: React.FC = () => {
         mode: "onChange",
     });
 
-    const onSubmit = (data: SignUpFields) => {};
-    
-    const onErroSubmit = () => {
-        toast.error("Please, fill the form correct!");
-    };
+    const onSubmit = (data: SignUpFields) => singUpFunc(data);
+    const onErroSubmit = () => toast.error("Please, fill the form correct!");
 
     return (
         <form onSubmit={handleSubmit(onSubmit, onErroSubmit)}>
@@ -59,8 +32,8 @@ export const SignUpForm: React.FC = () => {
                 </div>
                 <div className="grid gap-2">
                     <Label htmlFor="nickname">Nickname</Label>
-                    <Input {...register("nickname")} placeholder="YourCoolNickname" id="nickname" type="text" required />
-                    <div className="text-primary text-sm">{errors.nickname?.message}</div>
+                    <Input {...register("displayName")} placeholder="YourCoolNickname" id="nickname" type="text" required />
+                    <div className="text-primary text-sm">{errors.displayName?.message}</div>
                 </div>
                 <div className="grid gap-2">
                     <Label htmlFor="password">Password</Label>
@@ -73,7 +46,7 @@ export const SignUpForm: React.FC = () => {
                     <div className="text-primary text-sm">{errors.repeatPassword?.message}</div>
                 </div>
             </div>
-            <Button type="submit" className="w-full mt-6">Sign up</Button>
+            <Button type="submit" className="w-full mt-6" disabled={isSignUpPending}>Sign up</Button>
         </form>
     );
 };

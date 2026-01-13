@@ -35,6 +35,6 @@ export class EmailConfirmationController {
             });
         });
 
-        res.status(302).redirect(this.CLIENT_ORIGIN);
+        res.status(302).redirect(`${this.CLIENT_ORIGIN}/confirm`);
     }
 }

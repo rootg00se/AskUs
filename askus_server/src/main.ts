@@ -50,7 +50,7 @@ async function bootstrap() {
 
     app.enableCors({
         origin: config.getOrThrow<string>("CLIENT_ORIGIN"),
-        credentails: true,
+        credentials: true,
         exposedHeaders: ["set-cookie"],
     });
 

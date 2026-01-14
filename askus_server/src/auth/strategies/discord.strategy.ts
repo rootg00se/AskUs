@@ -9,7 +9,7 @@ import { provider_type } from "@prisma/generated";
 export class DiscordStrategy extends PassportStrategy(Strategy) {
     constructor(
         private readonly configService: ConfigService,
-        private readonly authService: AuthService
+        private readonly authService: AuthService,
     ) {
         super({
             clientID: configService.getOrThrow<string>("DISCORD_CLIENT_ID"),
@@ -18,16 +18,30 @@ export class DiscordStrategy extends PassportStrategy(Strategy) {
             scope: ["identify", "email"],
         });
     }
+    
+    authorizationParams(options: any) {
+        return {
+            ...options,
+            prompt: "consent"
+        }
+    }
 
     async validate(accessToken: string, refreshToken: string, profile: Profile) {
+        const isAnimated = profile.avatar?.startsWith("a_");
+        const extension = isAnimated ? "gif" : "png";
+
+        const avatarUrl = profile.avatar
+            ? `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.${extension}`
+            : null;
+
         const user = await this.authService.validateOAuthUser({
             email: profile.email!,
-            displayName: profile.displayName,
-            avatarUrl: profile.avatar,
+            displayName: profile.global_name || profile.username,
+            avatarUrl,
             accessToken,
             refreshToken,
             profileId: profile.id,
-            providerType: provider_type.discord
+            providerType: provider_type.discord,
         });
 
         return user;

@@ -19,6 +19,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
         });
     }
 
+    authorizationParams(options: any) {
+        return {
+            ...options,
+            prompt: "consent select_account"
+        }
+    }
+
     async validate(accessToken: string, refreshToken: string, profile: Profile) {
         const user = await this.authService.validateOAuthUser({
             email: profile.emails![0].value,

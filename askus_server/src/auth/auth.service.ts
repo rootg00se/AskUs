@@ -60,7 +60,7 @@ export class AuthService {
 
         const createdUser = await this.usersService.createOAuthUser({
             email: userDetails.email,
-            displayName: userDetails.email,
+            displayName: userDetails.displayName,
             avatarUrl: userDetails.avatarUrl
         });
 

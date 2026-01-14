@@ -4,5 +4,7 @@ const AUTH_URL = `${API_URL}/auth`
 
 export const AUTH_ENDPOINTS = {
     SIGN_UP: `${AUTH_URL}/register`,
-    SIGN_IN: `${AUTH_URL}/login`
+    SIGN_IN: `${AUTH_URL}/login`,
+    RESET_PASSWORD: `${AUTH_URL}/password/reset`,
+    NEW_PASSWORD: `${AUTH_URL}/password/new`
 }

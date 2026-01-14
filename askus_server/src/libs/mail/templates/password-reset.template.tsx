@@ -8,7 +8,7 @@ interface PasswordResetTemplateProps {
 }
 
 export function PasswordResetTemplate({ domain, token }: PasswordResetTemplateProps) {
-    const confirmLink = `${domain}/auth/password/new?token=${token}`;
+    const confirmLink = `${domain}/new-password?token=${token}`;
 
     return (
         <Tailwind>

@@ -23,9 +23,16 @@ export interface IAuthResponse extends IResponse {
     };
 }
 
+export interface ITwoFactorResponse extends IResponse {
+    data: {
+        twoFactorRequired: boolean;
+        message: string;
+    };
+}
+
 export type SignUpDto = {
     email: string;
     displayName: string;
     password: string;
     repeatPassword: string;
-}
+};

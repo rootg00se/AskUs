@@ -1,14 +1,14 @@
 import { $api } from "@/shared/api/api";
-import { type IAuthResponse, type ITwoFactorResponse, type SignUpDto } from "../model/types";
+import { type IAuthResponse, type ITwoFactorResponse, type SignInDto, type SignUpDto } from "../model/types";
 import { AUTH_ENDPOINTS } from "../lib/constants";
 
 export const authApi = {
     baseKey: "auth",
-    signUp: async (data: SignUpDto) => {
-        return $api.post<IAuthResponse>(AUTH_ENDPOINTS.SIGN_UP, data);
+    signUp: async (data: SignUpDto, recaptcha: string) => {
+        return $api.post<IAuthResponse>(AUTH_ENDPOINTS.SIGN_UP, data, { headers: { recaptcha } });
     },
-    signIn: async (data: { email: string; password: string }) => {
-        return $api.post<ITwoFactorResponse | IAuthResponse>(AUTH_ENDPOINTS.SIGN_IN, data);
+    signIn: async (data: SignInDto, recaptcha: string) => {
+        return $api.post<ITwoFactorResponse | IAuthResponse>(AUTH_ENDPOINTS.SIGN_IN, data, { headers: { recaptcha } });
     },
     resetPassword: async (data: { email: string }) => {
         return $api.post(AUTH_ENDPOINTS.RESET_PASSWORD, data);
@@ -18,5 +18,5 @@ export const authApi = {
     },
     twoFactorAuth: async (data: { code: string }) => {
         return $api.post<IAuthResponse>(`${AUTH_ENDPOINTS.TWO_FACTOR_AUTH}`, data);
-    }
+    },
 };

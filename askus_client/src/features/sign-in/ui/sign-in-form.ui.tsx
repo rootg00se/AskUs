@@ -1,14 +1,17 @@
 import { Button, Label } from "@/shared/components/ui";
 import { Input } from "@/shared/components/ui/input";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { useSignIn } from "@/entities/auth";
 import { signInFormSchema, type SignInFields } from "../model/validation-schemas";
+import ReCAPTCHA from "react-google-recaptcha";
+import { GOOGLE_RECAPTCHA_SITE_KEY } from "@/shared/config/constants";
 
 export const SignInForm: React.FC = () => {
     const { signInFunc, isSignInPending } = useSignIn();
+    const [recaptcha, setRecaptcha] = useState<string | null>(null);
 
     const {
         register,
@@ -19,7 +22,12 @@ export const SignInForm: React.FC = () => {
         mode: "onChange",
     });
 
-    const onSubmit = (data: SignInFields) => signInFunc(data);
+    const onSubmit = (data: SignInFields) => {
+        if (recaptcha) return signInFunc({ data, recaptcha });
+
+        toast.error("Please, complete recaptcha");
+    };
+
     const onErroSubmit = () => toast.error("Please, fill the form correct!");
 
     return (
@@ -39,6 +47,9 @@ export const SignInForm: React.FC = () => {
                     </div>
                     <Input {...register("password")} id="password" type="password" required />
                     <div className="text-primary text-sm">{errors.password?.message}</div>
+                </div>
+                <div className="flex justify-center">
+                    <ReCAPTCHA sitekey={GOOGLE_RECAPTCHA_SITE_KEY} onChange={setRecaptcha} />
                 </div>
             </div>
             <Button type="submit" className="w-full mt-6" disabled={isSignInPending}>

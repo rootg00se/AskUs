@@ -1,29 +1,32 @@
-import { useMutation } from "@tanstack/react-query"
-import { authApi } from "../api/auth.api"
+import { useMutation } from "@tanstack/react-query";
+import { authApi } from "../api/auth.api";
 import type { IErrorResponse } from "@/shared/types/error-response.type";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import type { ITwoFactorResponse } from "./types";
+import type { ITwoFactorResponse, SignInDto } from "./types";
 
 export const useSignIn = () => {
     const navigate = useNavigate();
 
     const signInMutation = useMutation({
-        mutationFn: authApi.signIn,
+        mutationFn: ({ data, recaptcha }: { 
+            data: SignInDto; 
+            recaptcha: string 
+        }) => authApi.signIn(data, recaptcha),
         onSuccess(data) {
             if ((data.data as ITwoFactorResponse).data.twoFactorRequired) {
-                navigate("/2fa")
+                navigate("/2fa");
             } else {
-                navigate("/")
+                navigate("/");
             }
         },
         onError: (error: IErrorResponse) => {
             toast.error(error.response.data.message);
-        }
-    })
+        },
+    });
 
     return {
         signInFunc: signInMutation.mutate,
-        isSignInPending: signInMutation.isPending
-    }
-}
+        isSignInPending: signInMutation.isPending,
+    };
+};

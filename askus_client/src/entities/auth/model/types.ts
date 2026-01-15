@@ -36,3 +36,8 @@ export type SignUpDto = {
     password: string;
     repeatPassword: string;
 };
+
+export type SignInDto = {
+    email: string;
+    password: string;
+};

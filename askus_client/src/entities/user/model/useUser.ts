@@ -5,7 +5,8 @@ export const useUser = () => {
     const { data, isPending } = useQuery({
         queryKey: [userApi.baseKey, "info"],
         queryFn: userApi.getInfo,
-        select: data => data.data
+        select: data => data.data,
+        retry: false,
     });
 
     return {

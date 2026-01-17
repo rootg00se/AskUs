@@ -7,7 +7,7 @@ import { queryClient } from "./providers/query-client.ts";
 import { BrowserRouter } from "react-router-dom";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ToastContainer } from "react-toastify";
-import { AuthProvier } from "./providers/auth-provider.ts";
+import { AuthProvier } from "./providers/auth-provider.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>

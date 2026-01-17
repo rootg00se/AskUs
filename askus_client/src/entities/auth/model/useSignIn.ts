@@ -4,6 +4,7 @@ import type { IErrorResponse } from "@/shared/types/error-response.type";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import type { ITwoFactorResponse, SignInDto } from "./types";
+import { queryClient } from "@/app/providers/query-client";
 
 export const useSignIn = () => {
     const navigate = useNavigate();
@@ -14,6 +15,8 @@ export const useSignIn = () => {
             recaptcha: string 
         }) => authApi.signIn(data, recaptcha),
         onSuccess(data) {
+            queryClient.invalidateQueries({ queryKey: ["users"] });
+
             if ((data.data as ITwoFactorResponse).data.twoFactorRequired) {
                 navigate("/2fa");
             } else {

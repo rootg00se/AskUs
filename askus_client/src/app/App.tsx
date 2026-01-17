@@ -14,6 +14,8 @@ import type React from "react";
 import { Route, Routes } from "react-router-dom";
 import { AuthLayout } from "./layouts/auth-layout";
 import { AppLayout } from "./layouts/app-layout";
+import { GuestProtectedRoutes } from "./routes/quest-protected-routes";
+import { AuthProtectedRoutes } from "./routes/auth-protected-routes";
 
 const App: React.FC = () => {
     return (
@@ -21,19 +23,27 @@ const App: React.FC = () => {
             <Routes>
                 <Route path="*" element={<NotFoundPage />} />
                 <Route path="/verify" element={<VerifyPage />} />
-                <Route path="/confirm" element={<ConfirmPage />} />
+                <Route element={<AuthProtectedRoutes />}>
+                    <Route path="/confirm" element={<ConfirmPage />} />
+                </Route>
                 <Route path="/" element={<AppLayout />}>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/profile/:id" element={<ProfilePage />} />
                     <Route path="/post/:id" element={<PostPage />} />
-                    <Route path="/post/create" element={<CreatePostPage />} />
+                    <Route element={<AuthProtectedRoutes />}>
+                        <Route path="/post/create" element={<CreatePostPage />} />
+                    </Route>
                 </Route>
                 <Route path="/" element={<AuthLayout />}>
-                    <Route path="/sign-up" element={<SignUpPage />} />
-                    <Route path="/sign-in" element={<SignInPage />} />
-                    <Route path="/new-password" element={<NewPasswordPage />} />
-                    <Route path="/2fa" element={<TwoFactorAuthPage />} />
-                    <Route path="/password-reset" element={<PasswordResetPage />} />
+                    <Route element={<GuestProtectedRoutes />}>
+                        <Route path="/sign-up" element={<SignUpPage />} />
+                        <Route path="/sign-in" element={<SignInPage />} />
+                        <Route path="/2fa" element={<TwoFactorAuthPage />} />
+                    </Route>
+                    <Route element={<AuthProtectedRoutes />}>
+                        <Route path="/new-password" element={<NewPasswordPage />} />
+                        <Route path="/password-reset" element={<PasswordResetPage />} />
+                    </Route>
                 </Route>
             </Routes>
         </div>

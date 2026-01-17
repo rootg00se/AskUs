@@ -15,7 +15,7 @@ export const Header: React.FC = () => {
                     <img src={logo} className="w-full" alt="" />
                 </div>
                 <SearchPostsInput />
-                {userData ? (
+                {userData?.data.is_verified ? (
                     <div className="flex items-center gap-4">
                         <Avatar className="w-10 h-10">
                             <AvatarImage src={userData.data.avatar_url} />

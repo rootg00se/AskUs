@@ -1,8 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { ResponseDto } from "../dto/response.dto";
-import { RanksWithIdDto } from "../dto/ranks-with-id.dto";
+import { RankDto } from "../dto/rank.dto";
 
-export class RanksResponse extends ResponseDto {
-    @ApiProperty({ type: [RanksWithIdDto] })
-    data: RanksWithIdDto[];
+export class RanksResponse extends RankDto {
+    @ApiProperty({
+        description: "Id of an rank",
+        example: "abc-dfe-cde",
+        type: String,
+    })
+    rank_id: string;
 }

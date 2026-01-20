@@ -1,14 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { NextRankDto } from "../dto/next-rank.dto";
 import { RanksWithIdDto } from "../dto/ranks-with-id.dto";
-import { ResponseDto } from "../dto/response.dto";
 
 class UserRankInfoDto extends RanksWithIdDto {
     @ApiProperty({ type: NextRankDto })
     next_rank: NextRankDto;
 }
 
-class UserRanksResponseDto {
+export class UserRanksResponse {
     @ApiProperty({
         description: "Id of an user rank id",
         example: "abc-dfe-rkt",
@@ -32,9 +31,4 @@ class UserRanksResponseDto {
 
     @ApiProperty({ type: UserRankInfoDto })
     ranks: UserRankInfoDto;
-}
-
-export class UserRanksResponse extends ResponseDto {
-    @ApiProperty({ type: UserRanksResponseDto })
-    data: UserRanksResponseDto;
 }

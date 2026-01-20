@@ -21,8 +21,10 @@ export class PostsService {
     }
 
     async getAllPosts(getAllPostsDto: GetAllPostsDto, userId?: string) {
+        const page = getAllPostsDto.page || 0;
         const pageLimit = getAllPostsDto.pageLimit || 10;
-        const postsToSkip = (getAllPostsDto.page || 0) * pageLimit;
+
+        const postsToSkip = page * pageLimit;
         const difficulties = getAllPostsDto.difficulty?.split(",") || [];
         const tags = getAllPostsDto.tags?.split(",") || [];
 
@@ -38,35 +40,47 @@ export class PostsService {
             `;
         }
 
-        const posts = await this.prismaService.posts.findMany({
-            skip: postsToSkip,
-            take: pageLimit,
-            where: {
-                ...(queryPostsId && {
-                    post_id: {
-                        in: queryPostsId?.map(el => el.post_id),
-                    },
-                }),
-                ...(difficulties.length > 0 && {
-                    post_difficulties: {
-                        difficulty: {
-                            in: difficulties,
+        const [posts, total] = await this.prismaService.$transaction([
+            this.prismaService.posts.findMany({
+                skip: postsToSkip,
+                take: pageLimit,
+                where: {
+                    ...(queryPostsId && {
+                        post_id: {
+                            in: queryPostsId?.map((el) => el.post_id),
                         },
-                    },
-                }),
-                AND: tags.map(tag => ({
-                    posts_tags: {
-                        some: {
-                            tags: { tag },
+                    }),
+                    ...(difficulties.length > 0 && {
+                        post_difficulties: {
+                            difficulty: {
+                                in: difficulties,
+                            },
                         },
-                    },
-                })),
-            },
-            orderBy: { created_at: "desc" },
-            ...this.postsSelect(userId),
-        });
+                    }),
+                    AND: tags.map((tag) => ({
+                        posts_tags: {
+                            some: {
+                                tags: { tag },
+                            },
+                        },
+                    })),
+                },
+                orderBy: { created_at: "desc" },
+                ...this.postsSelect(userId),
+            }),
+            this.prismaService.posts.count(),
+        ]);
 
-        return posts.map(post => this.transformPostData(post));
+        const totalPages = Math.ceil(total / pageLimit);
+
+        return {
+            items: posts.map((post) => this.transformPostData(post)),
+            total_page: totalPages,
+            has_next_page: page < totalPages,
+            page,
+            total,
+            page_limit: pageLimit
+        };
     }
 
     async getPopularPosts(limit: number = 5, userId?: string) {
@@ -80,7 +94,7 @@ export class PostsService {
             take: limit,
         });
 
-        return posts.map(post => this.transformPostData(post));
+        return posts.map((post) => this.transformPostData(post));
     }
 
     async getPostById(postId: string, userId?: string) {
@@ -129,7 +143,7 @@ export class PostsService {
                 },
                 posts_tags: {
                     createMany: {
-                        data: existingTags.map(tag => ({
+                        data: existingTags.map((tag) => ({
                             tag_id: tag.tag_id,
                         })),
                     },
@@ -158,11 +172,7 @@ export class PostsService {
         const existingPost = await this.checkIfPostExists(postId);
         const postFolder = "posts";
 
-        const fileData = await this.s3StorageService.uploadFile(
-            file,
-            postFolder,
-            existingPost.data_key,
-        );
+        const fileData = await this.s3StorageService.uploadFile(file, postFolder, existingPost.data_key);
 
         const createdPost = await this.prismaService.posts.update({
             where: { post_id: postId },
@@ -246,7 +256,7 @@ export class PostsService {
                 isLiked: Boolean(post_likes.length),
             }),
             is_correct: closed_posts.length > 0,
-            tags: posts_tags.map(pt => pt.tags),
+            tags: posts_tags.map((pt) => pt.tags),
         };
     }
 
@@ -259,7 +269,7 @@ export class PostsService {
                           where: { user_id: userId },
                           select: { user_id: true },
                       }
-                    : false
+                    : false,
             },
             ...POSTS_OMIT,
         };

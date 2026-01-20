@@ -11,12 +11,12 @@ export const isActivated = (): boolean => {
     const { userData, userIsPending } = useUser();
     if (userIsPending) return false;
 
-    return !!userData?.data.is_verified;
+    return !!userData?.is_verified;
 };
 
 export const userId = () => {
     const { userData, userIsPending } = useUser();
     if (userIsPending) return false;
 
-    return userData?.data.user_id;
+    return userData?.user_id;
 };

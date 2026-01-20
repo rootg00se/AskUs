@@ -1,8 +1,7 @@
-import { ResponseDto } from "@/shared/dto/response.dto";
 import { ApiProperty } from "@nestjs/swagger";
 import { AnswerUserDto } from "../dto/answer-user.dto";
 
-class AnswerResponseDto {
+export class AnswerResponse {
     @ApiProperty({
         description: "Id of an answer",
         example: "33ashjkuf34592fsKLe8f",
@@ -47,14 +46,4 @@ class AnswerResponseDto {
 
     @ApiProperty({ type: AnswerUserDto })
     users: AnswerUserDto;
-}
-
-export class AnswerResponse extends ResponseDto {
-    @ApiProperty({ type: AnswerResponseDto })
-    data: AnswerResponseDto;
-}
-
-export class AnswersArrayResponse extends ResponseDto {
-    @ApiProperty({ type: [AnswerResponseDto] })
-    data: AnswerResponseDto[];
 }

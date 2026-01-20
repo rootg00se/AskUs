@@ -1,11 +1,9 @@
-import type { IResponse } from "@/shared/types/response.type";
-
 export type TagData = {
     tag: string;
     badge_url: string;
-}
+};
 
-export type PostData = {
+export interface IPostResponse {
     post_id: string;
     data_key: string;
     data_url: string;
@@ -29,10 +27,11 @@ export type PostData = {
     isLiked: true;
 };
 
-export interface IPostResponse extends IResponse {
-    data: PostData;
-}
-
-export interface IPostsArrayResponse extends IResponse {
-    data: PostData[];
-}
+export interface IPaginationPostResponse {
+    items: IPostResponse[];
+    total_page: number;
+    has_next_page: boolean;
+    page: number;
+    total: number;
+    page_limit: number;
+};

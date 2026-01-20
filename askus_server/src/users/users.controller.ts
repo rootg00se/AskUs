@@ -20,11 +20,11 @@ import { Enable2FADto } from "./dto/update-2fa.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { UserResponse } from "@/shared/docs-responses/user.response";
-import { PostsArrayResponse } from "@/shared/docs-responses/post.response";
-import { AnswersArrayResponse } from "@/shared/docs-responses/answer.response";
 import { UpdateAvatarDto } from "./dto/update-avatar.dto";
 import { RanksService } from "@/ranks/ranks.service";
 import { UserRanksResponse } from "@/shared/docs-responses/user-ranks.response";
+import { PostResponse } from "@/shared/docs-responses/post.response";
+import { AnswerResponse } from "@/shared/docs-responses/answer.response";
 
 @Controller("users")
 @UseGuards(AuthenticatedGuard)
@@ -60,7 +60,7 @@ export class UsersController {
         summary: "Getting user's posts",
         description: "Returns all the posts that belongs to the user",
     })
-    @ApiOkResponse({ description: "User's posts returned", type: PostsArrayResponse })
+    @ApiOkResponse({ description: "User's posts returned", type: [PostResponse] })
     async getUserPosts(@Param("id") userId: string) {
         return await this.usersService.getUserPosts(userId);
     }
@@ -70,7 +70,7 @@ export class UsersController {
         summary: "Getting user's answers",
         description: "Returns all the answers that belongs to the user",
     })
-    @ApiOkResponse({ description: "User's answers returned", type: AnswersArrayResponse })
+    @ApiOkResponse({ description: "User's answers returned", type: [AnswerResponse] })
     async getUserAnswers(@Param("id") userId: string) {
         return await this.usersService.getUserAnswers(userId);
     }

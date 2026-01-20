@@ -3,7 +3,7 @@ import { AnswersService } from "./answers.service";
 import { UpdateAnswerDto } from "./dto/update-answer.dto";
 import { AuthenticatedGuard } from "@/auth/guards/authenticated.guard";
 import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
-import { AnswerResponse, AnswersArrayResponse } from "@/shared/docs-responses/answer.response";
+import { AnswerResponse } from "@/shared/docs-responses/answer.response";
 
 @Controller("answers")
 export class AnswersController {
@@ -14,7 +14,7 @@ export class AnswersController {
         summary: "Get all replies of the answer",
         description: "Returns all replies of the answer",
     })
-    @ApiOkResponse({ description: "Answers returned", type: AnswersArrayResponse })
+    @ApiOkResponse({ description: "Answers returned", type: [AnswerResponse] })
     async getAnswerReplies(@Param("id") answerId: string) {
         return await this.answersService.getAnswerReplies(answerId);
     }

@@ -29,15 +29,15 @@ import { GetPopularPostsDto } from "./dto/get-popular-posts.dto";
 import { CacheInterceptor, CacheKey } from "@nestjs/cache-manager";
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import {
+    PostPaginationResponse,
     PostResponse,
     PostResponseWithLike,
-    PostsArrayWithLikeResponse,
 } from "@/shared/docs-responses/post.response";
 import { UpdateAvatarDto } from "@/users/dto/update-avatar.dto";
 import { GetAllAnswersDto } from "@/answers/dto/get-all-answers.dto";
 import { AnswersService } from "@/answers/answers.service";
 import { CreateAnswerDto } from "@/answers/dto/create-answer.dto";
-import { AnswerResponse, AnswersArrayResponse } from "@/shared/docs-responses/answer.response";
+import { AnswerResponse } from "@/shared/docs-responses/answer.response";
 
 @Controller("posts")
 export class PostsController {
@@ -51,7 +51,7 @@ export class PostsController {
         summary: "All posts",
         description: "Returns full information about the posts",
     })
-    @ApiOkResponse({ description: "Posts returned", type: PostsArrayWithLikeResponse })
+    @ApiOkResponse({ description: "Posts returned", type: PostPaginationResponse })
     async getAllPosts(
         @Query() getAllPostsDto: GetAllPostsDto,
         @Authorized("user_id") userId: string,
@@ -64,7 +64,7 @@ export class PostsController {
         summary: "Get all popular posts",
         description: "Returns full information about the popular posts",
     })
-    @ApiOkResponse({ description: "Posts returned", type: PostsArrayWithLikeResponse })
+    @ApiOkResponse({ description: "Posts returned", type: [PostResponseWithLike] })
     @UseInterceptors(CacheInterceptor)
     @CacheKey("posts:popular")
     async getPopularPosts(
@@ -206,7 +206,7 @@ export class PostsController {
         summary: "Get all answers",
         description: "Returns all answers of the post",
     })
-    @ApiOkResponse({ description: "Answers returned", type: AnswersArrayResponse })
+    @ApiOkResponse({ description: "Answers returned", type: [AnswerResponse] })
     async getPostAnswers(@Param("id") postId: string, @Query() getAllAnswersDto: GetAllAnswersDto) {
         return await this.answersService.getAllPostAnswer(postId, getAllAnswersDto);
     }

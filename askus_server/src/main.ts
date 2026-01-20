@@ -5,7 +5,6 @@ import cookieParser from "cookie-parser";
 import { ValidationPipe } from "@nestjs/common";
 import { CustomLogger } from "./libs/common/logger/logger.service";
 import { GlobalFilter } from "./libs/common/filters/global.filter";
-import { GlobalInterceptor } from "./libs/common/interceptors/global.interceptor";
 import { createClient, RedisClientType } from "redis";
 import session from "express-session";
 import passport from "passport";
@@ -33,7 +32,6 @@ async function bootstrap() {
 
     app.use(cookieParser(config.getOrThrow<string>("COOKIES_SECRET")));
     app.useLogger(new CustomLogger());
-    app.useGlobalInterceptors(new GlobalInterceptor());
 
     app.useGlobalPipes(
         new ValidationPipe({

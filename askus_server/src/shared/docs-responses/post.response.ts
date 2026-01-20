@@ -1,10 +1,9 @@
-import { ResponseDto } from "@/shared/dto/response.dto";
 import { ApiProperty } from "@nestjs/swagger";
 import { PostDifficultyDto } from "../dto/post-difficulty.dto";
 import { PostUserInfoDto } from "../dto/post-user-info.dto";
 import { TagDto } from "../dto/tag.dto";
 
-class PostResponseDto {
+export class PostResponse {
     @ApiProperty({
         description: "Id of a post",
         example: "33ashjkuf34592fsKLe8f",
@@ -78,7 +77,7 @@ class PostResponseDto {
     users: PostUserInfoDto;
 }
 
-class PostResponseWithLikeDto extends PostResponseDto {
+export class PostResponseWithLike extends PostResponse {
     @ApiProperty({
         description: "Flag that shows if user liked this post",
         example: true,
@@ -87,22 +86,42 @@ class PostResponseWithLikeDto extends PostResponseDto {
     isLiked: boolean;
 }
 
-export class PostResponseWithLike extends ResponseDto {
-    @ApiProperty({ type: PostResponseWithLikeDto })
-    data: PostResponseWithLikeDto;
-}
+export class PostPaginationResponse {
+    @ApiProperty({ type: [PostResponseWithLike] })
+    items: PostResponseWithLike[];
 
-export class PostResponse extends ResponseDto {
-    @ApiProperty({ type: PostResponseDto })
-    data: PostResponseDto;
-}
+    @ApiProperty({
+        description: "Total count of pages",
+        example: 0,
+        type: Number,
+    })
+    total_page: number;
 
-export class PostsArrayResponse extends ResponseDto {
-    @ApiProperty({ type: [PostResponseDto] })
-    data: PostResponseDto[];
-}
+    @ApiProperty({
+        description: "Flag whitch tells if there is another page",
+        example: true,
+        type: Boolean,
+    })
+    has_next_page: number;
 
-export class PostsArrayWithLikeResponse extends ResponseDto {
-    @ApiProperty({ type: [PostResponseWithLikeDto] })
-    data: PostResponseWithLikeDto[];
+    @ApiProperty({
+        description: "Current page",
+        example: 0,
+        type: Number,
+    })
+    page: number;
+
+    @ApiProperty({
+        description: "Total of posts",
+        example: 0,
+        type: Number,
+    })
+    total: number;
+
+    @ApiProperty({
+        description: "Limit for the page",
+        example: 0,
+        type: Number,
+    })
+    page_limit: number;
 }

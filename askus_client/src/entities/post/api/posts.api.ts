@@ -1,10 +1,10 @@
 import { $api } from "@/shared/api/api";
 import { POSTS_ENDPOINT } from "../lib/constants";
-import type { IPostsArrayResponse } from "../model/types";
+import type { IPaginationPostResponse } from "../model/types";
 
 export const postsApi = {
     baseKey: "posts",
-    getAllPosts: async () => {
-        return $api.get<IPostsArrayResponse>(POSTS_ENDPOINT);
+    getAllPosts: async ({ page }: { page: number }) => {
+        return $api.get<IPaginationPostResponse>(`${POSTS_ENDPOINT}?pageLimit=8&page=${page}`);
     },
 };

@@ -41,6 +41,7 @@ model post_difficulties {
   post_difficulty_id String  @id(map: "pk_post_difficulties_post_difficulty_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   difficulty         String  @unique @db.VarChar(64)
   reward             Int
+  badge_url          String  @default("DD")
   posts              posts[]
 }
 
@@ -84,6 +85,7 @@ model ranks {
 model tags {
   tag_id     String       @id(map: "pk_tags_tag_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   tag        String       @unique @db.VarChar(64)
+  badge_url  String       @default("ff")
   posts_tags posts_tags[]
 }
 

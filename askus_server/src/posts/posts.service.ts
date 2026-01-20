@@ -246,7 +246,7 @@ export class PostsService {
                 isLiked: Boolean(post_likes.length),
             }),
             is_correct: closed_posts.length > 0,
-            tags: posts_tags.map(pt => pt.tags.tag),
+            tags: posts_tags.map(pt => pt.tags),
         };
     }
 

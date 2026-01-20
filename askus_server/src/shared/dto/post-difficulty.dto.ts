@@ -21,4 +21,11 @@ export class PostDifficultyDto {
         type: Number,
     })
     reward: number;
+
+    @ApiProperty({
+        description: "Url for the difficulty badge",
+        example: "http://example.com/badge.png",
+        type: String,
+    })
+    badge_url: string;
 }

@@ -6,7 +6,7 @@ export class PostUserInfoDto {
         example: "RootG00se",
         type: String,
     })
-    displayName: string;
+    display_name: string;
 
     @ApiProperty({
         description: "Url to the profile picture of a user",

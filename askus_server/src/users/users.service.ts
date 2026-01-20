@@ -121,7 +121,7 @@ export class UsersService {
             likes: _count.post_likes,
             is_correct: closed_posts.length > 0,
             data_url: `${this.configService.getOrThrow<string>("S3_BUCKET_URL")}/${post.data_key}`,
-            tags: posts_tags.map(pt => pt.tags.tag),
+            tags: posts_tags.map(pt => pt.tags),
         }));
     }
 

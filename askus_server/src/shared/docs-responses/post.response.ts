@@ -2,6 +2,7 @@ import { ResponseDto } from "@/shared/dto/response.dto";
 import { ApiProperty } from "@nestjs/swagger";
 import { PostDifficultyDto } from "../dto/post-difficulty.dto";
 import { PostUserInfoDto } from "../dto/post-user-info.dto";
+import { TagDto } from "../dto/tag.dto";
 
 class PostResponseDto {
     @ApiProperty({
@@ -53,12 +54,8 @@ class PostResponseDto {
     })
     likes: number;
 
-    @ApiProperty({
-        description: "All tags of the post",
-        example: ["books", "education"],
-        type: [String],
-    })
-    tags: string[];
+    @ApiProperty({ type: [TagDto] })
+    tags: TagDto[];
 
     @ApiProperty({
         description: "Time when post was created",
@@ -78,7 +75,7 @@ class PostResponseDto {
     post_difficulties: PostDifficultyDto;
 
     @ApiProperty({ type: PostUserInfoDto })
-    users: PostDifficultyDto;
+    users: PostUserInfoDto;
 }
 
 class PostResponseWithLikeDto extends PostResponseDto {

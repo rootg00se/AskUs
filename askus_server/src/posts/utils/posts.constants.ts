@@ -17,8 +17,8 @@ export const POSTS_INCLUDE = {
         },
     },
     posts_tags: {
-        select: {
-            tags: { select: { tag: true } },
+        include: {
+            tags: { omit: { tag_id: true } },
         },
     },
     closed_posts: {

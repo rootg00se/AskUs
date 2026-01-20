@@ -23,6 +23,7 @@ export interface IPost {
     posts_tags: {
         tags: {
             tag: string;
+            badge_url: string
         };
     }[];
     _count: {

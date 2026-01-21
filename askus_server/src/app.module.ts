@@ -11,6 +11,8 @@ import { CacheModule } from "@nestjs/cache-manager";
 import { keyvRedisConfig } from "./config/keyv-redis.config";
 import { AnswersModule } from './answers/answers.module';
 import { RanksModule } from './ranks/ranks.module';
+import { TagsModule } from './tags/tags.module';
+import { DifficultiesModule } from './difficulties/difficulties.module';
 
 @Module({
     imports: [
@@ -32,6 +34,8 @@ import { RanksModule } from './ranks/ranks.module';
         }),
         AnswersModule,
         RanksModule,
+        TagsModule,
+        DifficultiesModule,
     ],
 })
 export class AppModule {}

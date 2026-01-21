@@ -24,7 +24,7 @@ export interface IPostResponse {
         display_name: string;
         avatar_url: string;
     };
-    isLiked: true;
+    is_liked?: boolean;
 };
 
 export interface IPaginationPostResponse {

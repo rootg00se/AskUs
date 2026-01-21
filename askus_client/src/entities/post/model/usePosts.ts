@@ -10,7 +10,6 @@ export const usePosts = () => {
         getNextPageParam: (lastPage) => {
             return lastPage.data.has_next_page ? lastPage.data.page + 1 : undefined;
         },
-        // select: (data) => data.pages[0].data,
     });
 
     const postsData = useMemo(() => data?.pages.flatMap((page) => page.data.items) ?? [], [data]);

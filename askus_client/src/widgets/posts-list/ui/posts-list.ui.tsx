@@ -25,6 +25,8 @@ export const PostsList: React.FC = () => {
                     <div key={`group-${groupIndex}`} className="rounded-md px-5 bg-white mb-7">
                         {group!.map((post, postIndex) => (
                             <PostItem
+                                postId={post.post_id}
+                                isLiked={post.is_liked || false}
                                 difficulty_badge={post.post_difficulties.badge_url}
                                 avatar={post.users.avatar_url}
                                 createdAt={post.created_at}

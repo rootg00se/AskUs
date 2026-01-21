@@ -1,14 +1,19 @@
 import React from "react";
-import icon from "@/shared/assets/images/test-icon-4.png";
 import { cn } from "@/shared/lib/utils";
 
-export const Difficulty: React.FC<{ className?: string }> = ({ className }) => {
+interface IDifficultyProps {
+    className?: string;
+    badge_url: string;
+    difficulty: string;
+}
+
+export const Difficulty: React.FC<IDifficultyProps> = ({ className, difficulty, badge_url }) => {
     return (
-        <div className={cn("flex items-center gap-3", className)}>
-            <div>
-                <img src={icon} alt="" />
+        <div className={cn("flex items-center gap-3 cursor-pointer", className)}>
+            <div className="max-w-7">
+                <img src={badge_url} alt="" />
             </div>
-            <p>Easy</p>
+            <p className="capitalize">{difficulty}</p>
         </div>
     );
 };

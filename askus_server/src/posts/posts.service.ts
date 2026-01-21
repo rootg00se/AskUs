@@ -253,7 +253,7 @@ export class PostsService {
             likes: _count.post_likes,
             data_url: `${this.BUCKET_URL}/${post.data_key}`,
             ...(post_likes && {
-                isLiked: Boolean(post_likes.length),
+                is_liked: Boolean(post_likes.length),
             }),
             is_correct: closed_posts.length > 0,
             tags: posts_tags.map((pt) => pt.tags),

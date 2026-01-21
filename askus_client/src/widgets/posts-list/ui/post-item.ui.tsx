@@ -4,9 +4,10 @@ import { cn } from "@/shared/lib/utils";
 import { LikePost } from "@/features/like-post";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui";
 import moment from "moment";
-import type { TagData } from "@/entities/post";
+import { useDislikePost, useLikePost, type TagData } from "@/entities/post";
 
 interface IPostItemProps {
+    postId: string;
     createdAt: Date;
     tags: TagData[];
     title: string;
@@ -15,9 +16,11 @@ interface IPostItemProps {
     className?: string;
     likes: number;
     difficulty_badge: string;
+    isLiked: boolean;
 }
 
 export const PostItem: React.FC<IPostItemProps> = ({
+    postId,
     className,
     createdAt,
     tags,
@@ -26,7 +29,11 @@ export const PostItem: React.FC<IPostItemProps> = ({
     avatar,
     likes,
     difficulty_badge,
+    isLiked,
 }) => {
+    const { likePostFunc } = useLikePost();
+    const { dislikePostFunc } = useDislikePost();
+
     return (
         <div className={cn("py-4 border-b", className)}>
             <div className="flex items-start justify-between">
@@ -58,7 +65,11 @@ export const PostItem: React.FC<IPostItemProps> = ({
             </div>
             <p className="text-lg font-medium mb-3">{title}</p>
             <div className="flex items-center gap-4">
-                <LikePost likes={likes} />
+                <LikePost
+                    onClick={isLiked ? () => dislikePostFunc({ postId }) : () => likePostFunc({ postId })}
+                    likes={likes}
+                    className={isLiked ? "text-primary" : ""}
+                />
                 <div className="flex items-center gap-2">
                     <MessageCircle size={18} />
                     <span className="">Write</span>

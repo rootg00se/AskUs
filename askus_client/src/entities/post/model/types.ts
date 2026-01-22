@@ -21,6 +21,7 @@ export interface IPostResponse {
         badge_url: string;
     };
     users: {
+        user_id: string;
         display_name: string;
         avatar_url: string;
     };

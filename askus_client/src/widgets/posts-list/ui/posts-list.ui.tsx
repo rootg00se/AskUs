@@ -19,12 +19,13 @@ export const PostsList: React.FC = () => {
     const postGroups = chunkPosts(postsData || [], 4);
 
     return (
-        <div className="mt-5">
+        <div className="mt-2">
             <div className="di">
                 {postGroups.map((group, groupIndex) => (
                     <div key={`group-${groupIndex}`} className="rounded-md px-5 bg-white mb-7">
                         {group!.map((post, postIndex) => (
                             <PostItem
+                                userId={post.users.user_id}
                                 postId={post.post_id}
                                 isLiked={post.is_liked || false}
                                 difficulty_badge={post.post_difficulties.badge_url}

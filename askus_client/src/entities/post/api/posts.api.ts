@@ -1,5 +1,5 @@
 import { $api } from "@/shared/api/api";
-import { POSTS_ENDPOINT } from "../lib/constants";
+import { POPULAR_POSTS_ENDPOINT, POSTS_ENDPOINT } from "../lib/constants";
 import { type IPostResponse, type IPaginationPostResponse } from "../model/types";
 
 export const postsApi = {
@@ -7,10 +7,13 @@ export const postsApi = {
     getAllPosts: async ({ page }: { page: number }) => {
         return $api.get<IPaginationPostResponse>(`${POSTS_ENDPOINT}?pageLimit=8&page=${page}`);
     },
+    getPopularPosts: async () => {
+        return $api.get<IPostResponse[]>(`${POPULAR_POSTS_ENDPOINT}?limit=4`);
+    },
     likePost: async ({ postId }: { postId: string }) => {
         return $api.post<IPostResponse>(`${POSTS_ENDPOINT}/${postId}/like`);
     },
     dislikePost: async ({ postId }: { postId: string }) => {
         return $api.delete<IPostResponse>(`${POSTS_ENDPOINT}/${postId}/like`);
-    }
+    },
 };

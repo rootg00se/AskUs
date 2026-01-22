@@ -12,6 +12,7 @@ export const POSTS_INCLUDE = {
     post_difficulties: { omit: { post_difficulty_id: true } },
     users: {
         select: {
+            user_id: true,
             display_name: true,
             avatar_url: true,
         },

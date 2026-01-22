@@ -33,7 +33,7 @@ export const useLikePost = () => {
             toast.error(error.response.data.message);
         },
         onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: [postsApi.baseKey, "list"] });
+            queryClient.invalidateQueries({ queryKey: [postsApi.baseKey] });
         },
     });
 

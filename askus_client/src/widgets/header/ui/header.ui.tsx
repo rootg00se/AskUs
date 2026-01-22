@@ -12,18 +12,18 @@ export const Header: React.FC = () => {
     return (
         <header className="py-3 bg-white sticky top-0 z-10 border-b">
             <div className="_container flex items-center justify-between">
-                <div className="max-w-35">
+                <Link to={"/"} className="max-w-35">
                     <img src={logo} className="w-full" alt="" />
-                </div>
+                </Link>
                 <SearchPostsInput />
                 {isUserActivated && userData ? (
-                    <div className="flex items-center gap-4">
+                    <Link to={`/profile/${userData.user_id}`} className="flex items-center gap-4">
                         <Avatar className="w-10 h-10">
                             <AvatarImage src={userData.avatar_url} />
                             <AvatarFallback className="text-sm bg-[#dadada]">{userData.display_name.slice(0,2)}</AvatarFallback>
                         </Avatar>
                         <div className="text-[16px]">{userData.display_name}</div>
-                    </div>
+                    </Link>
                 ) : (
                     <div className="flex items-center gap-2">
                         <Link to={"/sign-in"} className="underline">

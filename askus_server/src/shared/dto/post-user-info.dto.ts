@@ -2,6 +2,13 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class PostUserInfoDto {
     @ApiProperty({
+        description: "Id of a user",
+        example: "asdb-asdb-asdbas-asda",
+        type: String,
+    })
+    user_id: string;
+
+    @ApiProperty({
         description: "Display name of a user",
         example: "RootG00se",
         type: String,

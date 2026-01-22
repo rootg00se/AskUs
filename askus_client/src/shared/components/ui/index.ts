@@ -5,3 +5,4 @@ export { Card, CardHeader, CardTitle, CardDescription, CardAction, CardContent, 
 export { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "./input-otp";
 export { Textarea } from "./textarea";
 export { Avatar, AvatarImage, AvatarFallback } from "./avatar";
+export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";

@@ -3,9 +3,14 @@ import { PostItem } from "./post-item.ui";
 import { usePosts } from "@/entities/post";
 import { useInView } from "react-intersection-observer";
 import { chunkPosts } from "../lib/chunk-array";
+import { usePostsFilterStore } from "@/features/posts-filter";
 
 export const PostsList: React.FC = () => {
-    const { postsData, postsPending, fetchNextPage, hasNextPage } = usePosts();
+    const tags = usePostsFilterStore((store) => store.tags);
+    const query = usePostsFilterStore((store) => store.query);
+    const difficulties = usePostsFilterStore((store) => store.difficulties);
+
+    const { postsData, postsPending, fetchNextPage, hasNextPage } = usePosts(tags.join(","), difficulties.join(","), query);
     const { ref, inView } = useInView({ threshold: 0.5 });
 
     useEffect(() => {

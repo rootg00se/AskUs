@@ -1,0 +1,1 @@
+export { usePostsFilterStore } from "./model/posts-filter.store";

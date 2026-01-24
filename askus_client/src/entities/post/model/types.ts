@@ -26,7 +26,7 @@ export interface IPostResponse {
         avatar_url: string;
     };
     is_liked?: boolean;
-};
+}
 
 export interface IPaginationPostResponse {
     items: IPostResponse[];
@@ -35,4 +35,11 @@ export interface IPaginationPostResponse {
     page: number;
     total: number;
     page_limit: number;
+}
+
+export type PostsFilterDto = {
+    page: number;
+    query: string;
+    tags: string;
+    difficulties: string;
 };

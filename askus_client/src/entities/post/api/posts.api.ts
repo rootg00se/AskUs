@@ -1,11 +1,13 @@
 import { $api } from "@/shared/api/api";
 import { POPULAR_POSTS_ENDPOINT, POSTS_ENDPOINT } from "../lib/constants";
-import { type IPostResponse, type IPaginationPostResponse } from "../model/types";
+import { type IPostResponse, type IPaginationPostResponse, type PostsFilterDto } from "../model/types";
 
 export const postsApi = {
     baseKey: "posts",
-    getAllPosts: async ({ page }: { page: number }) => {
-        return $api.get<IPaginationPostResponse>(`${POSTS_ENDPOINT}?pageLimit=8&page=${page}`);
+    getAllPosts: async ({ page, tags, difficulties, query }: PostsFilterDto) => {
+        return $api.get<IPaginationPostResponse>(
+            `${POSTS_ENDPOINT}?pageLimit=8&page=${page}&tags=${tags}&difficulty=${difficulties}&query=${query}`,
+        );
     },
     getPopularPosts: async () => {
         return $api.get<IPostResponse[]>(`${POPULAR_POSTS_ENDPOINT}?limit=4`);

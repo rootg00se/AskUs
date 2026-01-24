@@ -143,6 +143,12 @@
     /* overflow: hidden; */
 }
 
+.scrollbar {
+  overflow: scroll;
+  scrollbar-width: thin;
+  overflow-x: hidden;
+}
+
 body {
     background-color: #f1f1f1;
 }

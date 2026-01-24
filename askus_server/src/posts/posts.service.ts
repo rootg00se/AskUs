@@ -26,7 +26,7 @@ export class PostsService {
 
         const postsToSkip = page * pageLimit;
         const difficulties = getAllPostsDto.difficulty?.split(",") || [];
-        const tags = getAllPostsDto.tags?.split(",") || [];
+        const tags = getAllPostsDto.tags?.split(",").every((str) => str !== "") ? getAllPostsDto.tags?.split(",") : [];
 
         let queryPostsId;
 
@@ -40,35 +40,38 @@ export class PostsService {
             `;
         }
 
+        const postsWhereInput = {
+            ...(queryPostsId && {
+                post_id: {
+                    in: queryPostsId?.map((el) => el.post_id),
+                },
+            }),
+            ...(difficulties.length &&
+                difficulties.every((str) => str !== "") && {
+                    post_difficulties: {
+                        difficulty: {
+                            in: difficulties,
+                        },
+                    },
+                }),
+            AND: tags.map((tag) => ({
+                posts_tags: {
+                    some: {
+                        tags: { tag },
+                    },
+                },
+            })),
+        };
+
         const [posts, total] = await this.prismaService.$transaction([
             this.prismaService.posts.findMany({
                 skip: postsToSkip,
                 take: pageLimit,
-                where: {
-                    ...(queryPostsId && {
-                        post_id: {
-                            in: queryPostsId?.map((el) => el.post_id),
-                        },
-                    }),
-                    ...(difficulties.length > 0 && {
-                        post_difficulties: {
-                            difficulty: {
-                                in: difficulties,
-                            },
-                        },
-                    }),
-                    AND: tags.map((tag) => ({
-                        posts_tags: {
-                            some: {
-                                tags: { tag },
-                            },
-                        },
-                    })),
-                },
+                where: { ...postsWhereInput },
                 orderBy: { created_at: "desc" },
                 ...this.postsSelect(userId),
             }),
-            this.prismaService.posts.count(),
+            this.prismaService.posts.count({ where: { ...postsWhereInput }, }),
         ]);
 
         const totalPages = Math.ceil(total / pageLimit);
@@ -76,10 +79,10 @@ export class PostsService {
         return {
             items: posts.map((post) => this.transformPostData(post)),
             total_page: totalPages,
-            has_next_page: page < totalPages,
+            has_next_page: page < totalPages - 1,
             page,
             total,
-            page_limit: pageLimit
+            page_limit: pageLimit,
         };
     }
 

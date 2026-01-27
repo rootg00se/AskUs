@@ -12,18 +12,30 @@ export const useDislikePost = () => {
         mutationFn: postsApi.dislikePost,
         onMutate: async (params) => {
             await queryClient.cancelQueries({ queryKey: [postsApi.baseKey] });
-            const previousPosts: InfiniteData<AxiosResponse<IPaginationPostResponse>> = queryClient.getQueryData([
-                postsApi.baseKey,
-                "list",
-            ])!;
 
-            queryClient.setQueryData([postsApi.baseKey, "list"], () => {
-                const newPosts = previousPosts.pages.map((page) =>
-                    page.data.items.map((post) => (post.post_id === params.postId ? { ...post, isLiked: true } : post)),
-                );
-
-                return { ...previousPosts, data: newPosts };
+            const previousPosts = queryClient.getQueriesData<InfiniteData<AxiosResponse<IPaginationPostResponse>>>({
+                queryKey: [postsApi.baseKey, "list"],
             });
+
+            queryClient.setQueriesData<InfiniteData<AxiosResponse<IPaginationPostResponse>>>(
+                { queryKey: [postsApi.baseKey, "list"] },
+                (data) => {
+                    if (!data) return data;
+
+                    return {
+                        ...data,
+                        pages: data.pages.map((page) => ({
+                            ...page,
+                            data: {
+                                ...page.data,
+                                items: page.data.items.map((post) =>
+                                    post.post_id === params.postId ? { ...post, is_liked: false } : post,
+                                ),
+                            },
+                        })),
+                    };
+                },
+            );
 
             return { previousPosts };
         },

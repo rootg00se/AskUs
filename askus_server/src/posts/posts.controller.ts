@@ -26,7 +26,6 @@ import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { UpdatePostDto } from "./dto/update-post.dto";
 import { GetPopularPostsDto } from "./dto/get-popular-posts.dto";
-import { CacheInterceptor, CacheKey } from "@nestjs/cache-manager";
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import {
     PostPaginationResponse,
@@ -65,8 +64,6 @@ export class PostsController {
         description: "Returns full information about the popular posts",
     })
     @ApiOkResponse({ description: "Posts returned", type: [PostResponseWithLike] })
-    @UseInterceptors(CacheInterceptor)
-    @CacheKey("posts:popular")
     async getPopularPosts(
         @Query() getPopularPostsDto: GetPopularPostsDto,
         @Authorized("user_id") userId: string,

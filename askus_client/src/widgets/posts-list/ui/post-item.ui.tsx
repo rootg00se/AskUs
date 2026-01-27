@@ -35,8 +35,7 @@ export const PostItem: React.FC<IPostItemProps> = ({
     userId
 }) => {
     return (
-        <Link to={`/post/${postId}`}>
-            <div className={cn("py-4 border-b", className)}>
+        <div className={cn("py-4 border-b", className)}>
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-4 mb-3">
                         <Avatar className="w-12 h-12">
@@ -51,7 +50,7 @@ export const PostItem: React.FC<IPostItemProps> = ({
                             <div className="flex items-center gap-2 ml-2">
                                 <div className="flex">
                                     {tags.map((el) => (
-                                        <div className="max-w-5 -ml-2">
+                                        <div className="max-w-5 -ml-2" key={el.tag}>
                                             <img src={el.badge_url} className="w-full" alt="" />
                                         </div>
                                     ))}
@@ -64,15 +63,14 @@ export const PostItem: React.FC<IPostItemProps> = ({
                         <img src={difficulty_badge} className="w-full" alt="" />
                     </div>
                 </div>
-                <p className="text-lg font-medium mb-3">{title}</p>
-                <div className="flex items-center gap-4">
+                <Link to={`/post/${postId}`} className="text-lg font-medium mb-3 hover:underline">{title}</Link>
+                <div className="flex items-center gap-4 mt-3">
                     <LikePost isLiked={isLiked} postId={postId} likes={likes} />
                     <div className="flex items-center gap-2">
                         <MessageCircle size={18} />
                         <span className="">Write</span>
                     </div>
                 </div>
-            </div>
-        </Link>
+        </div>
     );
 };

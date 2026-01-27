@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 import type { IErrorResponse } from "@/shared/types/error-response.type";
 import { toast } from "react-toastify";
 import type { SignUpDto } from "./types";
+import { queryClient } from "@/app/providers/query-client";
 
 export const useSignUp = () => {
     const navigate = useNavigate();
@@ -14,6 +15,8 @@ export const useSignUp = () => {
             recaptcha: string
         }) => authApi.signUp(data, recaptcha),
         onSuccess() {
+            queryClient.invalidateQueries({ queryKey: ["posts"] });
+
             navigate("/verify")
         },
         onError: (error: IErrorResponse) => {

@@ -16,8 +16,9 @@ export const useSignIn = () => {
         }) => authApi.signIn(data, recaptcha),
         onSuccess(data) {
             queryClient.invalidateQueries({ queryKey: ["users"] });
+            queryClient.invalidateQueries({ queryKey: ["posts"] });
 
-            if ((data.data as ITwoFactorResponse).data.twoFactorRequired) {
+            if ((data.data as ITwoFactorResponse).twoFactorRequired) {
                 navigate("/2fa");
             } else {
                 navigate("/");

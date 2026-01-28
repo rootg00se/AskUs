@@ -33,7 +33,7 @@ export const PostItem: React.FC<IPostItemProps> = ({
     difficulty_badge,
     isLiked,
     userId
-}) => {
+}) => { 
     return (
         <div className={cn("py-4 border-b", className)}>
                 <div className="flex items-start justify-between">

@@ -14,7 +14,7 @@ export const isActivated = (): boolean => {
     return !!userData?.is_verified;
 };
 
-export const userId = () => {
+export const selectUserId = () => {
     const { userData, userIsPending } = useUser();
     if (userIsPending) return false;
 

@@ -21,7 +21,7 @@ export const usePostsFilter = () => {
     };
 
     useEffect(() => {
-        setSearchParams(qs.stringify(queryFilterObject, { arrayFormat: "comma" }));
+        setSearchParams(qs.stringify(queryFilterObject, { arrayFormat: "comma" }), { replace: true });
     }, [tags, query, difficulties]);
 
     useEffect(() => {

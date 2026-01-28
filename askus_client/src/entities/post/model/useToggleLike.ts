@@ -6,10 +6,10 @@ import type { IPaginationPostResponse } from "./types";
 import { toast } from "react-toastify";
 import type { IErrorResponse } from "@/shared/types/error-response.type";
 
-export const useLikePost = () => {
-    const likePostMutation = useMutation({
-        mutationKey: [postsApi.baseKey, "like"],
-        mutationFn: postsApi.likePost,
+export const useToggleLike = (like: boolean) => {
+    const toggleLikeMutation = useMutation({
+        mutationKey: [postsApi.baseKey, "toggleLike"],
+        mutationFn: like ? postsApi.likePost : postsApi.dislikePost,
         onMutate: async (params) => {
             await queryClient.cancelQueries({ queryKey: [postsApi.baseKey] });
 
@@ -29,7 +29,7 @@ export const useLikePost = () => {
                             data: {
                                 ...page.data,
                                 items: page.data.items.map((post) =>
-                                    post.post_id === params.postId ? { ...post, is_liked: true } : post,
+                                    post.post_id === params.postId ? { ...post, is_liked: like } : post,
                                 ),
                             },
                         })),
@@ -50,7 +50,7 @@ export const useLikePost = () => {
     });
 
     return {
-        likePostFunc: likePostMutation.mutate,
-        isLikePostPending: likePostMutation.isPending,
+        toggleLikePostFun: toggleLikeMutation.mutate,
+        isToggleLikePending: toggleLikeMutation.isPending,
     };
 };

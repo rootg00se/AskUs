@@ -113,6 +113,7 @@ export class UsersService {
         const userPosts = await this.prismaService.posts.findMany({
             where: { user_id: existingUser.user_id },
             include: { ...POSTS_INCLUDE },
+            orderBy: { created_at: "desc" },
             ...POSTS_OMIT
         });
 
@@ -131,6 +132,7 @@ export class UsersService {
         const userAnswers = await this.prismaService.answers.findMany({
             where: { user_id: existingUser.user_id },
             include: { ...ANSWERS_INCLUDE },
+            orderBy: { created_at: "desc" },
             ...ANSWERS_OMIT
         });
 

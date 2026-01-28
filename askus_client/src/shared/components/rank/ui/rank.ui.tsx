@@ -1,13 +1,17 @@
 import React from "react";
-import icon from "@/shared/assets/images/text-icon.png";
 
-export const Rank: React.FC = () => {
+interface IRankProps {
+    badge_url: string;
+    name: string;
+}
+
+export const Rank: React.FC<IRankProps> = ({ badge_url, name }) => {
     return (
         <div className="flex items-center gap-2">
             <div className="max-w-6">
-                <img src={icon} className="w-full" alt="" />
+                <img src={badge_url} className="w-full" alt="" />
             </div>
-            <p className="">Better call me</p>
+            <p className="capitalize">{name}</p>
         </div>
     );
 };

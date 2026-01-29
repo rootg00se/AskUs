@@ -18,30 +18,35 @@ export const UserRankInfo: React.FC = () => {
     );
 
     return (
-        <div className="rounded-md px-5 py-4 bg-white mb-7 mt-5">
+        <div className="rounded-md px-5 py-4 bg-white mb-7">
             <div className="mb-4">
                 <p className="text-lg mb-6">Your rank status:</p>
-                <div className="flex items-center gap-3 mb-4">
-                    <div className="text-center">
-                        <div className="max-w-7 mx-auto">
-                            <img src={userRanksData.ranks.badge_url} alt="" />
+                <div className="flex justify-between mb-8">
+                    <div className="flex items-center gap-3 w-full">
+                        <div className="text-center">
+                            <div className="max-w-7 mx-auto">
+                                <img src={userRanksData.ranks.badge_url} alt="" />
+                            </div>
+                            <p className="capitalize text-sm opacity-80 max-w-25">{userRanksData.ranks.name}</p>
                         </div>
-                        <p className="capitalize text-sm opacity-80 max-w-25">{userRanksData.ranks.name}</p>
-                    </div>
-                    <div className="w-full mb-6 max-w-50 h-2 rounded-full bg-[#dad9d9] relative">
-                        <div className={cn("absolute top-0 left-0 h-2 bg-primary z-5 rounded-full", `w-[${ranksPercent}%]`)} />
-                    </div>
-                    <div className="text-center">
-                        <div className="max-w-7 mx-auto">
-                            <img src={userRanksData.ranks.next_rank.badge_url} alt="" />
+                        <div className="w-full mb-6 max-w-50 h-2 rounded-full bg-[#dad9d9] relative">
+                            <div
+                                className={cn("absolute top-0 left-0 h-2 bg-primary z-5 rounded-full")}
+                                style={{ width: `${ranksPercent}%` }}
+                            />
                         </div>
-                        <p className="capitalize text-sm opacity-80 max-w-25">{userRanksData.ranks.next_rank.name}</p>
+                        <div className="text-center">
+                            <div className="max-w-7 mx-auto">
+                                <img src={userRanksData.ranks.next_rank.badge_url} alt="" />
+                            </div>
+                            <p className="capitalize text-sm opacity-80 max-w-25">{userRanksData.ranks.next_rank.name}</p>
+                        </div>
                     </div>
-                </div>
-                <div className="">
-                    <p>Your points: {userRanksData.points}</p>
-                    <p>Points to the next rank: {userRanksData.ranks.next_rank.points_left}</p>
-                    <p>Last time when points get: {moment(userRanksData.updated_at).fromNow()}</p>
+                    <div className="w-full max-w-70">
+                        <p><span className="opacity-75">Your points:</span> {userRanksData.points}</p>
+                        <p><span className="opacity-75">Points to the next rank:</span> {userRanksData.ranks.next_rank.points_left}</p>
+                        <p><span className="opacity-75">Last time when points get:</span> {moment(userRanksData.updated_at).fromNow()}</p>
+                    </div>
                 </div>
             </div>
             <div className="">

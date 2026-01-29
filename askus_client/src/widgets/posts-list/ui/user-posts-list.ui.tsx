@@ -27,6 +27,7 @@ export const UserPostsList: React.FC = () => {
                             displayName={post.users.display_name}
                             className={postIndex === userPostsData!.length - 1 ? "border-none" : ""}
                             likes={post.likes}
+                            isClosed={post.is_closed}
                         />
                     ))}
                 </div>

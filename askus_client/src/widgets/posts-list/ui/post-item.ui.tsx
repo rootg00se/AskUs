@@ -19,6 +19,7 @@ interface IPostItemProps {
     difficulty_badge: string;
     userId: string
     isLiked: boolean;
+    isClosed: boolean;
 }
 
 export const PostItem: React.FC<IPostItemProps> = ({
@@ -32,7 +33,8 @@ export const PostItem: React.FC<IPostItemProps> = ({
     likes,
     difficulty_badge,
     isLiked,
-    userId
+    userId,
+    isClosed
 }) => { 
     return (
         <div className={cn("py-4 border-b", className)}>
@@ -56,6 +58,7 @@ export const PostItem: React.FC<IPostItemProps> = ({
                                     ))}
                                 </div>
                                 <p className="text-[14px] capitalize">{tags[0]?.tag || "Empty tag"}</p>
+                                {isClosed && <p className="text-sm opacity-50">Closed</p>}
                             </div>
                         </div>
                     </div>

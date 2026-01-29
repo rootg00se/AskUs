@@ -120,7 +120,7 @@ export class UsersService {
         return userPosts.map(({ _count, closed_posts, posts_tags, ...post }) => ({
             ...post,
             likes: _count.post_likes,
-            is_correct: closed_posts.length > 0,
+            is_closed: closed_posts.length > 0,
             data_url: `${this.configService.getOrThrow<string>("S3_BUCKET_URL")}/${post.data_key}`,
             tags: posts_tags.map(pt => pt.tags),
         }));

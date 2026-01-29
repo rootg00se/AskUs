@@ -25,7 +25,7 @@ export const AnswerItem: React.FC<IAnswerProps> = ({
     isCorrect,
 }) => {
     return (
-        <div className={cn("border-b p-5", className, isCorrect ? "shadow-[0px_0px_13px_0px_rgba(234,_179,_8,_0.5)]" : "")}>
+        <div className={cn("border-b p-5", className, isCorrect ? "shadow-[0px_0px_13px_0px_rgba(234,179,8,0.5)]" : "")}>
             <div className="flex items-center gap-3 mb-3">
                 <Avatar className="w-11 h-11">
                     <AvatarImage src={avatar} />

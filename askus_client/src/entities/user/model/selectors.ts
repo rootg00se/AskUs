@@ -16,7 +16,7 @@ export const isActivated = (): boolean => {
 
 export const selectUserId = () => {
     const { userData, userIsPending } = useUser();
-    if (userIsPending) return false;
+    if (userIsPending) return undefined;
 
     return userData?.user_id;
 };

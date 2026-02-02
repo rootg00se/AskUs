@@ -1,17 +1,19 @@
-import { usePopularPosts } from "@/entities/post";
+import { useUserPosts } from "@/entities/post";
 import React from "react";
-import { PostItem } from "./post-item.ui";
+import { PostItem } from "../../../entities/post/ui/post-item.ui";
+import { useParams } from "react-router-dom";
 
-export const PopularPostsList: React.FC = () => {
-    const { popularPostsData } = usePopularPosts();
+export const UserPostsList: React.FC = () => {
+    const { id } = useParams();
+    const { userPostsData } = useUserPosts(id || "");
 
-    if (!popularPostsData) return null;
+    if (!userPostsData) return null;
 
     return (
         <div className="mt-2">
             <div className="di">
                 <div className="rounded-md px-5 bg-white mb-7">
-                    {popularPostsData!.map((post, postIndex) => (
+                    {userPostsData!.map((post, postIndex) => (
                         <PostItem
                             userId={post.users.user_id}
                             postId={post.post_id}
@@ -23,7 +25,7 @@ export const PopularPostsList: React.FC = () => {
                             tags={post.tags}
                             key={post.post_id}
                             displayName={post.users.display_name}
-                            className={postIndex === popularPostsData!.length - 1 ? "border-none" : ""}
+                            className={postIndex === userPostsData!.length - 1 ? "border-none" : ""}
                             likes={post.likes}
                             isClosed={post.is_closed}
                         />

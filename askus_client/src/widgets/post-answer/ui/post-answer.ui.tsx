@@ -4,6 +4,7 @@ import React from "react";
 import { PlusCircle } from "lucide-react";
 import icon from "@/shared/assets/images/text-icon.png";
 import avatar from "@/shared/assets/images/test-avatar.jpg";
+import { Rank } from "@/entities/rank";
 
 export const PostAnswer: React.FC<{ className?: string }> = ({ className }) => {
     return (
@@ -17,12 +18,7 @@ export const PostAnswer: React.FC<{ className?: string }> = ({ className }) => {
                         <span className="text-md">Legend</span>
                         <span className="text-[12px] opacity-50">1 hour ago</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <div className="max-w-4">
-                            <img src={icon} className="w-full" alt="" />
-                        </div>
-                        <p className="text-[14px]">Better call me</p>
-                    </div>
+                    <Rank size="sm" badge_url={icon} name={"baby"} />
                 </div>
             </div>
             <p className="mb-1">Please bro just take shower already 🙏🙏🙏</p>

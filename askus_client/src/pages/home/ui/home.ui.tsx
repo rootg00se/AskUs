@@ -1,22 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { PostTabs } from "@/widgets/post-tabs";
 import { PostsList } from "@/widgets/posts-list";
 import { Tabs, TabsContent } from "@/shared/components/ui";
-import { PopularPostsList } from "@/widgets/posts-list/ui/popular-posts-list.ui";
-import { useSearchParams } from "react-router-dom";
+import { PopularPostsList } from "@/widgets/popular-posts-list";
+import { useTabsUrlQuery } from "@/shared/hooks/useTabsUrlQuery";
 
 export const HomePage: React.FC = () => {
-    const [searchParams, setSearchParams] = useSearchParams();
-    const [activateTab, setActivateTab] = useState(searchParams.get("posts") || "all");
-
-    const handleTabChange = (value: string) => {
-        setActivateTab(value);
-
-        setSearchParams((prevParams) => {
-            prevParams.set("posts", value);
-            return prevParams;
-        });
-    };
+    const { activateTab, handleTabChange } = useTabsUrlQuery("posts", "all");
 
     return (
         <section className="w-full max-w-180">

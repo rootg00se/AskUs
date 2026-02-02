@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import { PostItem } from "./post-item.ui";
+import { PostItem } from "../../../entities/post/ui/post-item.ui";
 import { usePosts } from "@/entities/post";
 import { useInView } from "react-intersection-observer";
 import { chunkPosts } from "../lib/chunk-array";
-import { usePostsFilter } from "../model/usePostsFilter";
+import { usePostsFilter } from "../../../features/posts-filter/model/usePostsFilter";
 
 export const PostsList: React.FC = () => {
     const { tagsFilter, queryFilter, difficultiesFilter } = usePostsFilter();

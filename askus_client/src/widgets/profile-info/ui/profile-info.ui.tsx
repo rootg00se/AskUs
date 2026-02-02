@@ -1,8 +1,8 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage, Button } from "@/shared/components/ui";
-import { Rank } from "@/shared/components/rank";
 import { selectUserId, useProfile } from "@/entities/user";
 import { useParams } from "react-router-dom";
+import { Rank } from "@/entities/rank";
 
 export const ProfileInfo: React.FC = () => {
     const { id } = useParams();

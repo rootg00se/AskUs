@@ -1,3 +1,4 @@
+import { Rank } from "@/entities/rank";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui";
 import { cn } from "@/shared/lib/utils";
 import moment from "moment";
@@ -36,12 +37,7 @@ export const AnswerItem: React.FC<IAnswerProps> = ({
                         <span className="text-md">{displayName}</span>
                         <span className="text-[12px] opacity-50">{moment(createdAt).fromNow()}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <div className="max-w-4">
-                            <img src={badgeUrl} className="w-full" alt="" />
-                        </div>
-                        <p className="text-[14px] capitalize">{rankName}</p>
-                    </div>
+                    <Rank size="sm" badge_url={badgeUrl} name={rankName} />
                 </div>
             </div>
             <p className="mb-1">{text}</p>

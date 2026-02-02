@@ -1,0 +1,1 @@
+export { PopularPostsList } from "./ui/popular-posts-list.ui";

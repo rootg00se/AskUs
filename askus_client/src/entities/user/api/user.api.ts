@@ -10,4 +10,10 @@ export const userApi = {
     getProfile: async (userId: string) => {
         return await $api.get<IUserResponse>(`${USER_ENDPOINT}/${userId}`);
     },
+    updateAvatar: async (formData: FormData) => {
+        return await $api.patch<IUserResponse>(USER_ENDPOINTS.UPDATE_AVATAR, formData);
+    },
+    updateNickname: async (newNickname: string) => {
+        return await $api.patch<IUserResponse>(USER_ENDPOINTS.UPDATE_NICKNAME, { nickname: newNickname });
+    },
 };

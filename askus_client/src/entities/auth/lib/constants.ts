@@ -7,5 +7,6 @@ export const AUTH_ENDPOINTS = {
     SIGN_IN: `${AUTH_URL}/login`,
     RESET_PASSWORD: `${AUTH_URL}/password/reset`,
     NEW_PASSWORD: `${AUTH_URL}/password/new`,
-    TWO_FACTOR_AUTH: `${AUTH_URL}/2fa/verify`
+    TWO_FACTOR_AUTH: `${AUTH_URL}/2fa/verify`,
+    LOGOUT: `${AUTH_URL}/logout`
 }

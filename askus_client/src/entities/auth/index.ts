@@ -3,3 +3,4 @@ export { useSignIn } from "./model/useSignIn";
 export { useResetPassword } from "./model/useResetPassword";
 export { useNewPassword } from "./model/useNewPassword";
 export { useTwoFactor } from "./model/useTwoFactor";
+export { useLogout } from "./model/useLogout";

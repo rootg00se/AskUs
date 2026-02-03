@@ -19,4 +19,7 @@ export const authApi = {
     twoFactorAuth: async (data: { code: string }) => {
         return $api.post<IAuthResponse>(`${AUTH_ENDPOINTS.TWO_FACTOR_AUTH}`, data);
     },
+    logout: async () => {
+        return $api.post<void>(`${AUTH_ENDPOINTS.LOGOUT}`);
+    }
 };

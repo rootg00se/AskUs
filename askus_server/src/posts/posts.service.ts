@@ -133,7 +133,6 @@ export class PostsService {
             data: {
                 data_key: fileData.fileKey,
                 title: createPostDto.title,
-                description: createPostDto.description,
                 users: {
                     connect: {
                         user_id: userId,
@@ -195,7 +194,6 @@ export class PostsService {
             },
             data: {
                 title: updatePostDto.title,
-                description: updatePostDto.description,
             },
             ...this.postsSelect(),
         });

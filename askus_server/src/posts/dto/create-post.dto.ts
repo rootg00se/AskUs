@@ -13,16 +13,6 @@ export class CreatePostDto {
     title: string;
 
     @ApiProperty({
-        description: "Post description",
-        example: "Some post description",
-        type: String,
-    })
-    @IsNotEmpty({ message: "Description can't be empty" })
-    @Length(2, 254, { message: "Title length should be between 2 and 254 symbols" })
-    @IsString({ message: "Desciption should be a string" })
-    description: string;
-
-    @ApiProperty({
         description: "Difficulty of the post",
         example: "hard",
         type: String,

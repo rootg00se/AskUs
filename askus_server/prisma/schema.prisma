@@ -50,7 +50,6 @@ model posts {
   post_id            String            @id(map: "pk_posts_post_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   data_key           String            @unique(map: "posts_data_url_key")
   title              String            @db.VarChar(64)
-  description        String            @db.VarChar(255)
   user_id            String            @db.Uuid
   post_difficulty_id String            @db.Uuid
   created_at         DateTime          @default(now()) @db.Timestamp(6)

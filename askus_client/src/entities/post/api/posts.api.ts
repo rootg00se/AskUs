@@ -12,6 +12,9 @@ export const postsApi = {
     getPopularPosts: async () => {
         return $api.get<IPostResponse[]>(`${POPULAR_POSTS_ENDPOINT}?limit=4`);
     },
+    getPostById: async (postId: string) => {
+        return $api.get<IPostResponse>(`${POSTS_ENDPOINT}/${postId}`);
+    },
     getUserPosts: async (userId: string) => {
         return $api.get<IPostResponse[]>(`${USER_POST_ENDPOINT}/${userId}/posts`);
     },

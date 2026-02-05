@@ -2,7 +2,6 @@ export interface IPost {
     post_id: string;
     data_key: string;
     title: string;
-    description: string;
     user_id: string;
     post_difficulty_id: string;
     created_at: Date;

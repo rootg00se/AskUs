@@ -33,13 +33,6 @@ export class PostResponse {
     title: string;
 
     @ApiProperty({
-        description: "Description of the post",
-        example: "This is example post.",
-        type: String,
-    })
-    description: string;
-
-    @ApiProperty({
         description: "Flag that tells if post closed",
         example: true,
         type: Boolean,

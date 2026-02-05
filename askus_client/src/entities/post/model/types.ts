@@ -8,7 +8,6 @@ export interface IPostResponse {
     data_key: string;
     data_url: string;
     title: string;
-    description: string;
     is_closed: boolean;
     likes: number;
     tags: TagData[];
